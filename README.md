@@ -9,7 +9,7 @@ _Note: While I am part of Arks Layer, this is not an Arks Layer project, and Ark
 
 ## Binary download
 
-You can get the latest version of the binary from [here](http://pso2mod.com/2016/05/25/pso2-mod-manager/) 
+You can get the latest version of the binary from [here](http://pso2mod.com/pso2-mod-manager/) 
 
 ## Roadmap of sorts
 This is a list of upcoming features in no specific order:
