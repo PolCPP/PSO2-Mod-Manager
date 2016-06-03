@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:PSO2ModManager"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

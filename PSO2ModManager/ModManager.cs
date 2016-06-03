@@ -1,15 +1,15 @@
-﻿using System;
+﻿using ServiceStack.Text;
+using SharpCompress.Archive;
+using SharpCompress.Common;
+using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Windows;
-using ServiceStack.Text;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Collections.ObjectModel;
-using SharpCompress.Archive;
-using SharpCompress.Common;
+using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PSO2ModManager
 {
@@ -29,24 +29,27 @@ namespace PSO2ModManager
             }
         }
 
-        Mod m;
-        Settings settings;
-        Mod selectedMod;
-        readonly string zipPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\";
-        readonly string apiGetURL = "http://pso2mod.com/wp-json/wp/v2/posts/";
+        private Mod m;
+        private Settings settings;
+        private Mod selectedMod;
+        private readonly string zipPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\";
+        private readonly string apiGetURL = "http://pso2mod.com/wp-json/wp/v2/posts/";
 
         public delegate void SelectedModChangedEventHandler();
+
         public event SelectedModChangedEventHandler OnSelectionChanged;
 
         public delegate void GenericErrorHandler(string message);
+
         public event GenericErrorHandler OnError;
 
         public delegate void DownloadCompleteEventHandler(bool success, string errorMessage = null);
+
         public event DownloadCompleteEventHandler OnDownloadComplete;
 
         public delegate void DownloadPercentChanged(int percent);
-        public event DownloadPercentChanged OnDownloadPercentPercentChanged;
 
+        public event DownloadPercentChanged OnDownloadPercentPercentChanged;
 
         public ModManager(string PSO2Dir = null) {
             if (!File.Exists(Settings.SettingsPath) || PSO2Dir != null) {
@@ -64,9 +67,8 @@ namespace PSO2ModManager
             InstalledMods = new ObservableCollection<Mod>(settings.InstalledMods);
             this.OnDownloadComplete += AfterDownload;
             UpdateSettings();
-            CheckBrokenMods();            
+            CheckBrokenMods();
         }
-
 
         /// <summary>
         /// Checks that settings file is correct
@@ -79,7 +81,6 @@ namespace PSO2ModManager
                 return testSettings.IsValid();
             }
         }
-
 
         /// <summary>
         /// From a provided REST API endpoint download a mod.
@@ -161,7 +162,7 @@ namespace PSO2ModManager
                 }
 
                 // Because some people like to package the files inside a folder, let's fix this.
-                if (Directory.GetFiles(modExtractPath).Count() == 0 && Directory.GetDirectories(modExtractPath).Count() == 1)  {
+                if (Directory.GetFiles(modExtractPath).Count() == 0 && Directory.GetDirectories(modExtractPath).Count() == 1) {
                     var dir = Directory.GetDirectories(modExtractPath).First();
                     var files = Directory.GetFiles(dir);
                     var dirs = Directory.GetDirectories(dir);
@@ -187,7 +188,7 @@ namespace PSO2ModManager
         /// Even hook so when the web client progress changes the mod manager
         /// progress updates accordingly
         /// </summary>
-        void WCDownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e) {
+        private void WCDownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e) {
             if (OnDownloadPercentPercentChanged != null) {
                 OnDownloadPercentPercentChanged(e.ProgressPercentage);
             }
@@ -196,10 +197,9 @@ namespace PSO2ModManager
         /// <summary>
         /// Event hook to make sure that downloding is false after download finishes
         /// </summary>
-        void AfterDownload(bool result, string message = null) {
+        private void AfterDownload(bool result, string message = null) {
             Downloading = false;
         }
-
 
         /// <summary>
         /// Returns true if the mod is installed
@@ -207,7 +207,6 @@ namespace PSO2ModManager
         public bool IsInstalled(Mod m) {
             return InstalledMods.Contains(m);
         }
-
 
         /// <summary>
         /// Installs/Uninstalls the selected mod
@@ -223,7 +222,7 @@ namespace PSO2ModManager
         /// <summary>
         /// Saves the settings file.
         /// </summary>
-        void UpdateSettings() {
+        private void UpdateSettings() {
             settings.AvailableMods = AvailableMods.ToList();
             settings.InstalledMods = InstalledMods.ToList();
             File.WriteAllText(Settings.SettingsPath, JsonSerializer.SerializeToString(settings));
@@ -232,7 +231,7 @@ namespace PSO2ModManager
         /// <summary>
         /// Checks all installed mods to see if they got broken by an update.
         /// </summary>
-        void CheckBrokenMods() {
+        private void CheckBrokenMods() {
             List<Mod> brokenMods = new List<Mod>();
             foreach (Mod m in InstalledMods) {
                 if (m.ContentsMD5 != null) {
@@ -268,7 +267,7 @@ namespace PSO2ModManager
         /// <summary>
         /// Checks for updates on a mod.
         /// </summary>
-        async Task<bool> CheckForUpdates(Mod m) {
+        private async Task<bool> CheckForUpdates(Mod m) {
             m.Busy = true;
             string modString = string.Empty;
             using (WebClient wc = new WebClient()) {
@@ -292,7 +291,6 @@ namespace PSO2ModManager
             return true;
         }
 
-
         /// <summary>
         /// Updates the selected mod.
         /// </summary
@@ -308,7 +306,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Installs a mod into the game. 
+        /// Installs a mod into the game.
         /// </summary>
         public void Install(Mod m) {
             string mPath = Mod.InstallPath + m.Slug;
@@ -316,7 +314,7 @@ namespace PSO2ModManager
             if (!Directory.Exists(mBackupPath)) {
                 Directory.CreateDirectory(mBackupPath);
             }
-            // Before installing get the list of affected ice files and make sure no installed 
+            // Before installing get the list of affected ice files and make sure no installed
             // mod uses the same files
             if (!ModCollision(m)) {
                 m.ContentsMD5 = new Dictionary<string, string>();
@@ -325,8 +323,8 @@ namespace PSO2ModManager
                     if (!Mod.ModSettingsFiles.Contains(fileName)) {
                         File.Copy(settings.PSO2Dir + "\\" + Path.GetFileName(f), mBackupPath + "\\" + fileName, true);
                         File.Copy(mPath + "\\" + Path.GetFileName(f), settings.PSO2Dir + "\\" + fileName, true);
-                        // This is done here because some mods will have dynamic/setup content so we create 
-                        // the md5 hash over the file we copy on the pso2 dir 
+                        // This is done here because some mods will have dynamic/setup content so we create
+                        // the md5 hash over the file we copy on the pso2 dir
                         m.ContentsMD5.Add(Path.GetFileName(f), Helpers.CheckMD5(settings.PSO2Dir + "\\" + fileName));
                     }
                 }
@@ -334,13 +332,13 @@ namespace PSO2ModManager
                 AvailableMods.Remove(m);
                 UpdateSettings();
             } else {
-                MessageBox.Show("Another installed mod is using the same files this mod will try to overwrite. Installation cancelled", 
+                MessageBox.Show("Another installed mod is using the same files this mod will try to overwrite. Installation cancelled",
                                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         /// <summary>
-        /// Checks if the mod collisions with any other installed mod. 
+        /// Checks if the mod collisions with any other installed mod.
         /// </summary>
         public bool ModCollision(Mod m) {
             string mPath = Mod.InstallPath + m.Slug;
@@ -353,7 +351,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Uninstalls a game mod. 
+        /// Uninstalls a game mod.
         /// </summary>
         public void Uninstall(Mod m) {
             string modPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\" + m.Slug;
@@ -375,7 +373,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Removes the selected mod. 
+        /// Removes the selected mod.
         /// </summary>
         public void Delete() {
             Delete(this.SelectedMod);
@@ -383,7 +381,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Deletes any mod that has the same slug. 
+        /// Deletes any mod that has the same slug.
         /// </summary>
         public void Delete(string slug) {
             var available = AvailableMods.Where(x => x.Slug == slug);
@@ -397,7 +395,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Deletes a mod. 
+        /// Deletes a mod.
         /// </summary>
         public void Delete(Mod m) {
             string modPath = Mod.InstallPath + m.Slug;

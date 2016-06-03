@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace PSO2ModManager
 {
@@ -14,7 +12,7 @@ namespace PSO2ModManager
         public static readonly string SettingsPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "settings.json";
 
         /// <summary>
-        /// Checks if the updates file isn't damaged 
+        /// Checks if the updates file isn't damaged
         /// </summary>
         public bool IsValid() {
             if (AvailableMods == null || InstalledMods == null || PSO2Dir == null) {

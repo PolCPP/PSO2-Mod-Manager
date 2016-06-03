@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace PSO2ModManager
@@ -16,8 +12,7 @@ namespace PSO2ModManager
     {
         public ModManager Mods { get; set; }
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter();
-        DispatcherTimer updatesTimer;
-
+        private DispatcherTimer updatesTimer;
 
         public MainWindow() {
             if (ModManager.CheckForSettings()) {
@@ -38,7 +33,6 @@ namespace PSO2ModManager
             Mods.OnSelectionChanged += ModChanged;
         }
 
-
         /// <summary>
         /// Callback to update the Download progressbar.
         /// </summary>
@@ -46,29 +40,26 @@ namespace PSO2ModManager
             DownloadBar.Value = value;
         }
 
-
         /// <summary>
-        /// Starts a mod download. 
+        /// Starts a mod download.
         /// </summary>
-        void DownloadMod(string url) {
+        private void DownloadMod(string url) {
             DownloadBar.Visibility = Visibility.Visible;
             Mods.DownloadMod(url);
         }
 
-
         /// <summary>
         /// Updates a mod
         /// </summary>
-        void UpdateSelectedMod() {
+        private void UpdateSelectedMod() {
             DownloadBar.Visibility = Visibility.Visible;
             Mods.UpdateMod();
         }
 
-
         /// <summary>
         /// Callback when the download progress
         /// </summary>
-        void DownloadComplete(bool success, string errorMessage = null) {
+        private void DownloadComplete(bool success, string errorMessage = null) {
             if (!success) {
                 MessageBox.Show(errorMessage, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
             } else {
@@ -79,18 +70,16 @@ namespace PSO2ModManager
             DownloadBar.Visibility = Visibility.Hidden;
         }
 
-
         /// <summary>
         /// Kinda validates the url.
         /// </summary>
-        void ValidateUrlInput() {
+        private void ValidateUrlInput() {
             if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToLower().StartsWith("http://")) {
                 DownloadModBtn.IsEnabled = false;
             } else {
                 DownloadModBtn.IsEnabled = true;
             }
         }
-
 
         /// <summary>
         /// Shows a Folderbrowser dialog and gets PSO2 Directory, if it fails it closes the application.
@@ -120,7 +109,7 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Event hook that enables the updates button after 
+        /// Event hook that enables the updates button after
         /// certain time passes, and stops the time.
         /// </summary>
         private void ReenableUpdates(object sender, EventArgs e) {
@@ -154,21 +143,17 @@ namespace PSO2ModManager
             ValidateUrlInput();
         }
 
-
         private void DownloadModBtn_Click(object sender, RoutedEventArgs e) {
             DownloadMod(DownloadUrlTextbox.Text);
         }
-
 
         private void CheckForUpdatesBtn_Click(object sender, RoutedEventArgs e) {
             CheckForUpdates();
         }
 
-
         private void InstallUninstallBtn_Click(object sender, RoutedEventArgs e) {
             Mods.ToggleMod();
         }
-
 
         private void AvailableModsList_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             /*
@@ -186,7 +171,6 @@ namespace PSO2ModManager
             }
         }
 
-
         private void InstalledModsList_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             /*
             InstallUninstallBtn.Content = "Uninstall";
@@ -201,7 +185,6 @@ namespace PSO2ModManager
             }
         }
 
-
         private void DeleteBtn_Click(object sender, RoutedEventArgs e) {
             Mods.Delete();
             InstallUninstallBtn.IsEnabled = false;
@@ -209,17 +192,14 @@ namespace PSO2ModManager
             ViewSiteBtn.IsEnabled = false;
         }
 
-
         private void UpdateBtn_Click(object sender, RoutedEventArgs e) {
             UpdateSelectedMod();
         }
 
-
         private void ViewSiteBtn_Click(object sender, RoutedEventArgs e) {
             System.Diagnostics.Process.Start("http://pso2mod.com/?p=" + SelectedPresenter.Id);
         }
-    
-        #endregion
 
+        #endregion Input Events
     }
 }

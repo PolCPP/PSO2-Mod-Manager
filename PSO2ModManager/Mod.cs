@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace PSO2ModManager
 {
-    public class Mod: INotifyPropertyChanged
+    public class Mod : INotifyPropertyChanged
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -27,7 +26,7 @@ namespace PSO2ModManager
 
         [IgnoreDataMember]
         public static readonly string ModUpdateMessage = "(Update Available)";
-        
+
         [IgnoreDataMember]
         public static readonly string[] ModSettingsFiles = new string[] { "settings.csv", "targets.csv", "options.csv" };
 
@@ -53,7 +52,6 @@ namespace PSO2ModManager
                 }
                 updateAvailable = value;
                 NotifyPropertyChanged("UpdateAvailable");
-
             }
         }
 
@@ -72,8 +70,7 @@ namespace PSO2ModManager
         private bool busy = false;
         private bool updateAvailable = false;
 
-        public Mod(string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail)
-        {
+        public Mod(string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail) {
             this.Id = id;
             this.Name = name;
             this.Date = date;
@@ -86,16 +83,15 @@ namespace PSO2ModManager
         }
 
         /// <summary>
-        /// Checks if a mod is valid. Note: This is kinda placeholderish. 
+        /// Checks if a mod is valid. Note: This is kinda placeholderish.
         /// Note that it doesn't check if the mod data is correct or well installed.
         /// </summary
         public bool isValid() {
             if (Id == null || Name == null || Date == null || Description == null || Author == null || Url == null || File == null || Slug == null || Thumbnail == null) {
                 return false;
-            }                
+            }
             return true;
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -105,5 +101,4 @@ namespace PSO2ModManager
             }
         }
     }
-
 }

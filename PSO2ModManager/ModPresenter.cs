@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Media.Imaging;
 
 namespace PSO2ModManager
 {
     public class ModPresenter : INotifyPropertyChanged
     {
-
         public string Id {
             get {
                 return id;
@@ -15,7 +13,6 @@ namespace PSO2ModManager
                 id = value;
                 NotifyPropertyChanged("Id");
                 NotifyPropertyChanged("CanViewOnline");
-
             }
         }
 
@@ -95,15 +92,15 @@ namespace PSO2ModManager
             }
         }
 
-        string id = string.Empty;
-        string thumbnail = string.Empty;
-        string description = string.Empty;
-        string name = string.Empty;
-        bool canDelete = false;
-        bool canUpdate = false;
-        bool canInstallUninstall = false;
-        bool installed = false;
-        string installUpdateBtnValue = "Install";
+        private string id = string.Empty;
+        private string thumbnail = string.Empty;
+        private string description = string.Empty;
+        private string name = string.Empty;
+        private bool canDelete = false;
+        private bool canUpdate = false;
+        private bool canInstallUninstall = false;
+        private bool installed = false;
+        private string installUpdateBtnValue = "Install";
 
         protected void NotifyPropertyChanged(String propertyName) {
             if (PropertyChanged != null)

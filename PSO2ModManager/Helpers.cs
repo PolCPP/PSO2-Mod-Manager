@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace PSO2ModManager
 {
-    static class Helpers
+    internal static class Helpers
     {
         public static string CheckMD5(string filename) {
             using (var md5 = MD5.Create()) {
@@ -24,7 +24,5 @@ namespace PSO2ModManager
             }
             return true;
         }
-
-
     }
 }

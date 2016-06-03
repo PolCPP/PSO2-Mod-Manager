@@ -9,14 +9,14 @@
         Title="PSO2 Mod tool" Height="483" Width="710"  Icon="iconbleh.ico" Name="BaseWindow">
 
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
 
     <Grid>
 
         <Grid Height="43" VerticalAlignment="Top">
             <Grid.Resources>
-                <VisualBrush x:Key="DownloadHint" Stretch="None" AlignmentX="Left" AlignmentY="Top" >
+                <VisualBrush x:Key="DownloadHint" Stretch="None" AlignmentX="Left" AlignmentY="Top">
                     <VisualBrush.Transform>
                         <TranslateTransform X="5" Y="7" />
                     </VisualBrush.Transform>
@@ -25,7 +25,7 @@
                             <TextBlock FontFamily="SEGOEWP"  FontSize="10"   FontWeight="Normal"
                            HorizontalAlignment="Left" VerticalAlignment="Center"
                            Foreground="Gray" FontStyle="Italic" Opacity="1"
-                           Text="Type the PSO2 Mod DB download url "/>
+                           Text="Type the PSO2 Mod DB download url " />
                         </Grid>
                     </VisualBrush.Visual>
                 </VisualBrush>
@@ -33,33 +33,33 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="481*" />
-                <ColumnDefinition Width="88"/>
-                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="88" />
+                <ColumnDefinition Width="130" />
             </Grid.ColumnDefinitions>
-            <Button x:Name="DownloadModBtn" Content="Download" Grid.Column="2" Margin="8,10,10,0" VerticalAlignment="Top" Height="25" Click="DownloadModBtn_Click"/>
+            <Button x:Name="DownloadModBtn" Content="Download" Grid.Column="2" Margin="8,10,10,0" VerticalAlignment="Top" Height="25" Click="DownloadModBtn_Click" />
             <TextBox x:Name="DownloadUrlTextbox" Height="25" Grid.Column="0"  VerticalAlignment="Top" Margin="10,10,10,0" Grid.ColumnSpan="2" TextChanged="DownloadUrlTextbox_TextChanged">
                 <TextBox.Style>
                     <Style TargetType="{x:Type TextBox}">
-                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Background" Value="Transparent" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=DownloadUrlButton,Path=Text}" 
-                                     Value="" >
-                                <Setter Property="Background" Value="{StaticResource DownloadHint}"/>
+                            <DataTrigger Binding="{Binding ElementName=DownloadUrlButton,Path=Text}"
+                                     Value="">
+                                <Setter Property="Background" Value="{StaticResource DownloadHint}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <Button x:Name="CheckForUpdatesBtn" Content="Check for Updates" Grid.Column="3" Margin="9,10,10,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="2" Click="CheckForUpdatesBtn_Click"/>
-            <ProgressBar x:Name="DownloadBar" Grid.Column="1" Height="25" Margin="10,10,8,0" VerticalAlignment="Top" Grid.ColumnSpan="4" Visibility="Hidden"/>
+            <Button x:Name="CheckForUpdatesBtn" Content="Check for Updates" Grid.Column="3" Margin="9,10,10,0" VerticalAlignment="Top" Height="25" Grid.ColumnSpan="2" Click="CheckForUpdatesBtn_Click" />
+            <ProgressBar x:Name="DownloadBar" Grid.Column="1" Height="25" Margin="10,10,8,0" VerticalAlignment="Top" Grid.ColumnSpan="4" Visibility="Hidden" />
         </Grid>
         <Grid Margin="0,43,0,109">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50*"/>
-                <ColumnDefinition Width="50*"/>
+                <ColumnDefinition Width="50*" />
+                <ColumnDefinition Width="50*" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="AvailableModsLabel" Content="Available mods" Margin="10,0" Height="26" VerticalAlignment="Top"/>
-            <ListBox x:Name="AvailableModsList" Margin="10,26,10,10" SelectionChanged="AvailableModsList_SelectionChanged" ItemsSource="{Binding Mods.AvailableMods, ElementName=BaseWindow}"  >
+            <Label x:Name="AvailableModsLabel" Content="Available mods" Margin="10,0" Height="26" VerticalAlignment="Top" />
+            <ListBox x:Name="AvailableModsList" Margin="10,26,10,10" SelectionChanged="AvailableModsList_SelectionChanged" ItemsSource="{Binding Mods.AvailableMods, ElementName=BaseWindow}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -70,7 +70,7 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <Label x:Name="InstalledModsLabel" Content="Installed mods" Margin="10,0" Height="26" VerticalAlignment="Top" Grid.Column="1"/>
+            <Label x:Name="InstalledModsLabel" Content="Installed mods" Margin="10,0" Height="26" VerticalAlignment="Top" Grid.Column="1" />
             <ListBox x:Name="InstalledModsList" Margin="10,26,10,10" Grid.Column="1" SelectionChanged="InstalledModsList_SelectionChanged" ItemsSource="{Binding Mods.InstalledMods, ElementName=BaseWindow}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -86,21 +86,18 @@
         <Grid Height="109" VerticalAlignment="Bottom">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="154*"/>
-                <ColumnDefinition Width="447*"/>
+                <ColumnDefinition Width="154*" />
+                <ColumnDefinition Width="447*" />
             </Grid.ColumnDefinitions>
-            <Button IsEnabled="{Binding SelectedPresenter.CanDelete, ElementName=BaseWindow}" x:Name="DeleteBtn" Content="Delete Mod" Margin="0,-15,10,86" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="DeleteBtn_Click"/>
-            <Button IsEnabled="{Binding SelectedPresenter.CanUpdate, ElementName=BaseWindow}" x:Name="UpdateBtn" Content="Update" Margin="0,0,10,61" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="UpdateBtn_Click"/>
-            <Button IsEnabled="{Binding SelectedPresenter.CanInstallUninstall, ElementName=BaseWindow}" x:Name="InstallUninstallBtn" Content="{Binding SelectedPresenter.InstallUpdateBtnValue, ElementName=BaseWindow}" Margin="0,0,10,36" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="InstallUninstallBtn_Click"/>
-            <Image x:Name="ModImage" Height="106" VerticalAlignment="Bottom" Stretch="UniformToFill" Source="{Binding SelectedPresenter.Thumbnail, ElementName=BaseWindow}" Margin="0,0,3,0"   />
-            <WebBrowser local:BrowserBehavior.Html="{Binding SelectedPresenter.Description, ElementName=BaseWindow}" x:Name="ModDescriptionTxt" Height="70"  Margin="2,-15,99,36" VerticalAlignment="Bottom" Grid.Column="1"   />
+            <Button IsEnabled="{Binding SelectedPresenter.CanDelete, ElementName=BaseWindow}" x:Name="DeleteBtn" Content="Delete Mod" Margin="0,-15,10,86" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="DeleteBtn_Click" />
+            <Button IsEnabled="{Binding SelectedPresenter.CanUpdate, ElementName=BaseWindow}" x:Name="UpdateBtn" Content="Update" Margin="0,0,10,61" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="UpdateBtn_Click" />
+            <Button IsEnabled="{Binding SelectedPresenter.CanInstallUninstall, ElementName=BaseWindow}" x:Name="InstallUninstallBtn" Content="{Binding SelectedPresenter.InstallUpdateBtnValue, ElementName=BaseWindow}" Margin="0,0,10,36" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1" Click="InstallUninstallBtn_Click" />
+            <Image x:Name="ModImage" Height="106" VerticalAlignment="Bottom" Stretch="UniformToFill" Source="{Binding SelectedPresenter.Thumbnail, ElementName=BaseWindow}" Margin="0,0,3,0" />
+            <WebBrowser local:BrowserBehavior.Html="{Binding SelectedPresenter.Description, ElementName=BaseWindow}" x:Name="ModDescriptionTxt" Height="70"  Margin="2,-15,99,36" VerticalAlignment="Bottom" Grid.Column="1" />
 
-
-            <Button x:Name="ViewSiteBtn" Content="View on PSO2 Mod DB" Margin="0,0,10,9" HorizontalAlignment="Right" Width="142" Height="22" VerticalAlignment="Bottom" Grid.Column="1" Click="ViewSiteBtn_Click" IsEnabled="{Binding SelectedPresenter.CanViewOnline, ElementName=BaseWindow}"/>
-            <ComboBox x:Name="ModTargetCombo" Margin="0,0,157,9" HorizontalAlignment="Right" Width="142" Height="22" VerticalAlignment="Bottom" Grid.Column="1"/>
-            <ComboBox x:Name="ModOptionCombo" Margin="0,0,304,9" HorizontalAlignment="Right" Width="141" Height="22" VerticalAlignment="Bottom" Grid.Column="1"/>
+            <Button x:Name="ViewSiteBtn" Content="View on PSO2 Mod DB" Margin="0,0,10,9" HorizontalAlignment="Right" Width="142" Height="22" VerticalAlignment="Bottom" Grid.Column="1" Click="ViewSiteBtn_Click" IsEnabled="{Binding SelectedPresenter.CanViewOnline, ElementName=BaseWindow}" />
+            <ComboBox x:Name="ModTargetCombo" Margin="0,0,157,9" HorizontalAlignment="Right" Width="142" Height="22" VerticalAlignment="Bottom" Grid.Column="1" />
+            <ComboBox x:Name="ModOptionCombo" Margin="0,0,304,9" HorizontalAlignment="Right" Width="141" Height="22" VerticalAlignment="Bottom" Grid.Column="1" />
         </Grid>
-
     </Grid>
-
 </Window>
