@@ -17,8 +17,6 @@ namespace PSO2ModManager
         public string Slug { get; set; }
         public string Thumbnail { get; set; }
         public Dictionary<string, string> ContentsMD5 { get; set; }
-
-        [IgnoreDataMember]
         public string ToolInfo { get; set; } = "";
 
         [IgnoreDataMember]
@@ -26,6 +24,9 @@ namespace PSO2ModManager
 
         [IgnoreDataMember]
         public static readonly string ModUpdateMessage = "(Update Available)";
+
+        [IgnoreDataMember]
+        public static readonly string ModLocalMessage = "(Local)";
 
         [IgnoreDataMember]
         public static readonly string[] ModSettingsFiles = new string[] { "settings.csv", "targets.csv", "options.csv" };
@@ -55,6 +56,21 @@ namespace PSO2ModManager
             }
         }
 
+        public bool IsLocal {
+            get {
+                return isLocal;
+            }
+
+            set {
+                if (value == true && this.ToolInfo == null) {
+                    this.ToolInfo = ModLocalMessage;
+                } else if (value == true && !this.ToolInfo.Contains(ModLocalMessage)) {
+                    this.ToolInfo += ModLocalMessage;
+                }
+                isLocal = value;
+            }
+        }
+
         [IgnoreDataMember]
         public bool Busy {
             get {
@@ -68,9 +84,10 @@ namespace PSO2ModManager
         }
 
         private bool busy = false;
+        private bool isLocal = false;
         private bool updateAvailable = false;
 
-        public Mod(string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail) {
+        public Mod(string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail, bool local = false) {
             this.Id = id;
             this.Name = name;
             this.Date = date;
@@ -80,6 +97,7 @@ namespace PSO2ModManager
             this.File = file;
             this.Slug = slug;
             this.Thumbnail = thumbnail;
+            this.IsLocal = local;
         }
 
         /// <summary>

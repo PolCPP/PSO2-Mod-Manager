@@ -154,28 +154,7 @@ namespace PSO2ModManager
                     }
                     return;
                 }
-
-                using (var archive = ArchiveFactory.Open(modZipPath)) {
-                    foreach (var entry in archive.Entries) {
-                        entry.WriteToDirectory(modExtractPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
-                    }
-                }
-
-                // Because some people like to package the files inside a folder, let's fix this.
-                if (Directory.GetFiles(modExtractPath).Count() == 0 && Directory.GetDirectories(modExtractPath).Count() == 1) {
-                    var dir = Directory.GetDirectories(modExtractPath).First();
-                    var files = Directory.GetFiles(dir);
-                    var dirs = Directory.GetDirectories(dir);
-                    foreach (var f in files) {
-                        File.Move(f, modExtractPath + "\\" + Path.GetFileName(f));
-                    }
-                    foreach (var d in dirs) {
-                        Directory.Move(d, modExtractPath + "\\" + Path.GetFileName(d));
-                    }
-                    Directory.Delete(dir);
-                }
-
-                File.Delete(modZipPath);
+                UnpackMod(modZipPath, modExtractPath);
                 AvailableMods.Add(m);
                 if (OnDownloadComplete != null) {
                     OnDownloadComplete(true);
@@ -184,8 +163,47 @@ namespace PSO2ModManager
             }
         }
 
+        public void AddLocalMod(string path) {
+            Mod m = new Mod(string.Empty, Path.GetFileNameWithoutExtension(path), DateTime.Now, string.Empty, string.Empty, string.Empty, string.Empty, Guid.NewGuid().ToString("N"), string.Empty, true);
+            string modZipPath = zipPath + m.Slug + ".zip";
+            string modExtractPath = Mod.InstallPath + m.Slug + "\\";
+            File.Copy(path, modZipPath);
+            UnpackMod(modZipPath, modExtractPath);
+            AvailableMods.Add(m);
+            UpdateSettings();
+        }
+
         /// <summary>
-        /// Even hook so when the web client progress changes the mod manager
+        /// Unpacks the mod to our local storage
+        /// progress updates accordingly
+        /// </summary>
+        public void UnpackMod(string modZipPath, string modExtractPath) {
+            using (var archive = ArchiveFactory.Open(modZipPath)) {
+                foreach (var entry in archive.Entries) {
+                    entry.WriteToDirectory(modExtractPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+                }
+            }
+
+            // Because some people like to package the files inside a folder, let's fix this.
+            if (Directory.GetFiles(modExtractPath).Count() == 0 && Directory.GetDirectories(modExtractPath).Count() == 1) {
+                var dir = Directory.GetDirectories(modExtractPath).First();
+                var files = Directory.GetFiles(dir);
+                var dirs = Directory.GetDirectories(dir);
+                foreach (var f in files) {
+                    File.Move(f, modExtractPath + "\\" + Path.GetFileName(f));
+                }
+                foreach (var d in dirs) {
+                    Directory.Move(d, modExtractPath + "\\" + Path.GetFileName(d));
+                }
+                Directory.Delete(dir);
+            }
+
+            File.Delete(modZipPath);
+        }
+
+
+        /// <summary>
+        /// Event hook so when the web client progress changes the mod manager
         /// progress updates accordingly
         /// </summary>
         private void WCDownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e) {
@@ -268,6 +286,7 @@ namespace PSO2ModManager
         /// Checks for updates on a mod.
         /// </summary>
         private async Task<bool> CheckForUpdates(Mod m) {
+            if (m.IsLocal) return true;
             m.Busy = true;
             string modString = string.Empty;
             using (WebClient wc = new WebClient()) {
@@ -406,7 +425,9 @@ namespace PSO2ModManager
             AvailableMods.Remove(m);
             UpdateSettings();
             Directory.Delete(modPath, true);
-            File.Delete(m.Thumbnail);
+            if (File.Exists(m.Thumbnail)) {
+                File.Delete(m.Thumbnail);
+            }
         }
     }
 }

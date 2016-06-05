@@ -111,12 +111,14 @@ namespace PSO2ModManager
 
         public void Setup(Mod m, bool mInstalled) {
             if (m == null) {
+                installed = false;
                 Id = string.Empty;
                 Thumbnail = string.Empty;
                 Description = string.Empty;
-                installed = false;
+                InstallUpdateBtnValue = "Install";
                 CanInstallUninstall = false;
                 CanUpdate = false;
+                CanDelete = false;
             } else {
                 installed = mInstalled;
                 Id = m.Id;

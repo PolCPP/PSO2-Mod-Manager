@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CefSharp.Wpf;
+using Microsoft.Win32;
+using ServiceStack.Text;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -31,6 +34,9 @@ namespace PSO2ModManager
             Mods.OnDownloadPercentPercentChanged += DownloadProgress;
             Mods.OnDownloadComplete += DownloadComplete;
             Mods.OnSelectionChanged += ModChanged;
+            // For some reason RegisterJsObject doesn't work so we're stream a json object 
+            // to the page title, once we have a new download action.
+            Browser.TitleChanged += Browser_TitleChanged;
         }
 
         /// <summary>
@@ -44,8 +50,12 @@ namespace PSO2ModManager
         /// Starts a mod download.
         /// </summary>
         private void DownloadMod(string url) {
-            DownloadBar.Visibility = Visibility.Visible;
-            Mods.DownloadMod(url);
+            if (!Mods.Downloading) {
+                DownloadBar.Visibility = Visibility.Visible;
+                Mods.DownloadMod(url);
+            } else {
+                MessageBox.Show("Currently downloading another mod. Please wait until it's installed","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -65,6 +75,7 @@ namespace PSO2ModManager
             } else {
                 DownloadUrlTextbox.Text = "";
                 ValidateUrlInput();
+                InstalledModsTab.Focus();
             }
             DownloadBar.Value = 0;
             DownloadBar.Visibility = Visibility.Hidden;
@@ -137,6 +148,26 @@ namespace PSO2ModManager
             MessageBox.Show(message, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        private void FindAndInstallMod() {
+            OpenFileDialog fd = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            fd.Filter = "PSO2 Mod files (.zip)|*.zip";
+            fd.FilterIndex = 1;
+
+            fd.Multiselect = true;
+
+            // Call the ShowDialog method to show the dialog box.
+            bool? userClickedOK = fd.ShowDialog();
+
+            // Process input if the user clicked OK.
+            if (userClickedOK == true) {
+                Mods.AddLocalMod(fd.FileName);
+                InstalledModsTab.Focus();
+            }
+
+        }
+
         #region Input Events
 
         private void DownloadUrlTextbox_TextChanged(object sender, TextChangedEventArgs e) {
@@ -156,40 +187,19 @@ namespace PSO2ModManager
         }
 
         private void AvailableModsList_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            /*
-            InstallUninstallBtn.Content = "Install";
-            InstallUninstallBtn.IsEnabled = true;
-            ViewSiteBtn.IsEnabled = true;
-            DeleteBtn.IsEnabled = true;
-            */
             if (e.AddedItems.Count > 0) {
                 Mods.SelectedMod = (Mod)e.AddedItems[0];
-                /*
-                UpdateBtn.IsEnabled = selectedItem.UpdateAvailable;
-                ShowPreview(selectedItem);
-                */
             }
         }
 
         private void InstalledModsList_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            /*
-            InstallUninstallBtn.Content = "Uninstall";
-            InstallUninstallBtn.IsEnabled = true;
-            ViewSiteBtn.IsEnabled = true;
-            DeleteBtn.IsEnabled = true;
-            */
             if (e.AddedItems.Count > 0) {
-                //UpdateBtn.IsEnabled = selectedItem.UpdateAvailable;
                 Mods.SelectedMod = (Mod)e.AddedItems[0];
-                //ShowPreview(selectedItem);
             }
         }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e) {
             Mods.Delete();
-            InstallUninstallBtn.IsEnabled = false;
-            DeleteBtn.IsEnabled = false;
-            ViewSiteBtn.IsEnabled = false;
         }
 
         private void UpdateBtn_Click(object sender, RoutedEventArgs e) {
@@ -199,6 +209,26 @@ namespace PSO2ModManager
         private void ViewSiteBtn_Click(object sender, RoutedEventArgs e) {
             System.Diagnostics.Process.Start("http://pso2mod.com/?p=" + SelectedPresenter.Id);
         }
+
+        private void Browser_TitleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            DownloadAction duh = new DownloadAction();
+            duh.Url = "http://google.com";            
+            try {
+                JsonSerializer.SerializeToString<DownloadAction>(duh);
+                DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction>(e.NewValue.ToString());
+                if (da.Url != null) {
+                    DownloadMod(da.Url);
+                }
+            } catch {
+                // Not valid json: Note it would be better to just run a json validation method,
+                // but there doesn't seem to be anything on servicestack.text for that
+            }
+        }
+
+        private void InstallLocalModBtn_Click(object sender, RoutedEventArgs e) {
+            FindAndInstallMod();
+        }
+
 
         #endregion Input Events
     }
