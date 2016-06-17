@@ -1,9 +1,9 @@
 # Phantasy Star Online 2 Mod manager
 
 ## About
-The mod manager is a client for [pso2mod.com](pso2mod.com). Basically it downloads Pso2 mods, and installs them into the game.
+The mod manager is a client for [http://pso2mod.com](http://pso2mod.com). Basically, it downloads PSO2 mods and installs them into the game.
 
-The code isn't exactly great because i've been using it as a kitchen sink, trying the stuff _"new things"_ that c# has that i cant usually use in Unity.
+The code isn't exactly great because I've (Rupikachu) been using it as a kitchen sink, trying the stuff _"new things"_ that C# has that I can't usually use in Unity.
 
 _Note: While I am part of Arks Layer, this is not an Arks Layer project, and Arks Layer doesn't endorse modding in any kind of way. Also remember that modding PSO2 is against the game TOS and could get you banned._
 
