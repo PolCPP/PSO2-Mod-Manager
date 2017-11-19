@@ -1,5 +1,4 @@
-﻿using CefSharp.Wpf;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using ServiceStack.Text;
 using System;
 using System.Windows;

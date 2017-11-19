@@ -13,7 +13,8 @@ namespace PSO2ModManager
             var settings = new CefSettings();
             // Uncomment for version 49
             //settings.CefCommandLineArgs.Add("disable-gpu", "1");
-            Cef.Initialize(settings, shutdownOnProcessExit: true, performDependencyCheck: true);
+            //Cef.Initialize(settings, shutdownOnProcessExit: true, performDependencyCheck: true);
+            Cef.Initialize();
         }
 
     }

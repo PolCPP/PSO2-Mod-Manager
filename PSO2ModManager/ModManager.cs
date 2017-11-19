@@ -1,6 +1,6 @@
 ﻿using ServiceStack.Text;
-using SharpCompress.Archive;
-using SharpCompress.Common;
+using SharpCompress.Archives;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -178,9 +178,10 @@ namespace PSO2ModManager
         /// progress updates accordingly
         /// </summary>
         public void UnpackMod(string modZipPath, string modExtractPath) {
+            var option = new ExtractionOptions() { ExtractFullPath = true, Overwrite = true };
             using (var archive = ArchiveFactory.Open(modZipPath)) {
                 foreach (var entry in archive.Entries) {
-                    entry.WriteToDirectory(modExtractPath, ExtractOptions.ExtractFullPath | ExtractOptions.Overwrite);
+                    entry.WriteToDirectory(modExtractPath, option);
                 }
             }
 
