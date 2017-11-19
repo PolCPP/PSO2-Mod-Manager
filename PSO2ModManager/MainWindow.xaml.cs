@@ -10,7 +10,7 @@ namespace PSO2ModManager
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public ModManager Mods { get; set; }
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter();

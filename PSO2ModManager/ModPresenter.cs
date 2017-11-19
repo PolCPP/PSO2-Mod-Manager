@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.ComponentModel;
 
 namespace PSO2ModManager
@@ -123,7 +124,8 @@ namespace PSO2ModManager
                 installed = mInstalled;
                 Id = m.Id;
                 Thumbnail = AppDomain.CurrentDomain.BaseDirectory + "\\thumbnails\\" + m.Thumbnail;
-                Description = "<!DOCTYPE html><html lang='en-US'><head><meta charset='UTF-8'></head><body><style> * { margin:0 } </style>" + String.Format("<p><strong>{0} by {1}</strong></p><p>{2}</p></body></html>", m.Name, m.Author, m.Description);
+                //Description = '<!DOCTYPE html><html><head><meta charset='UTF-8' /><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css\" /></head><style>.sharedaddy{display:none;}</style><body>" + String.Format("<p><strong>{0} by {1}</strong></p><p>{2}</p></body></html>", m.Name, m.Author, m.Description);
+                Description = "data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes("<!DOCTYPE html><html><head><meta charset='UTF-8' /><style>html {color:#222; font-size:1em; line-height: 1.4;}body{margin: 0;}h1{font-size:2em;padding:0;}.sharedaddy{display:none;}</style></head><body>" + String.Format("<h1>{0} <small>by {1}</small></h1><p>{2}</p></body></html>", m.Name, m.Author, m.Description)));
                 if (mInstalled) {
                     InstallUpdateBtnValue = "Uninstall";
                 } else {
