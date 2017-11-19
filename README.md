@@ -1,6 +1,9 @@
-# Phantasy Star Online 2 Mod manager
+﻿# Phantasy Star Online 2 Mod manager
+
+[![Build status](https://ci.appveyor.com/api/projects/status/n8o73hgyoy7rn9ep?svg=true)](https://ci.appveyor.com/project/logue/pso2-mod-manager)
 
 ## About
+
 The mod manager is a client for [http://pso2mod.com](http://pso2mod.com). Basically, it downloads PSO2 mods and installs them into the game.
 
 The code isn't exactly great because I've (Rupikachu) been using it as a kitchen sink, trying the stuff _"new things"_ that C# has that I can't usually use in Unity.
@@ -12,6 +15,7 @@ _Note: While I am part of Arks Layer, this is not an Arks Layer project, and Ark
 You can get the latest version of the binary from [here](http://pso2mod.com/pso2-mod-manager/) 
 
 ## Roadmap of sorts
+
 This is a list of upcoming features in no specific order:
 
 - Big UI changes _see and download mods from the manager_.
@@ -23,16 +27,16 @@ This is a list of upcoming features in no specific order:
 
 ## License
 
-	DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-	Version 2, December 2004
-	 
-	 Copyright (C) 2004 Sam Hocevar
-	 14 rue de Plaisance, 75014 Paris, France
-	 Everyone is permitted to copy and distribute verbatim or modified
-	 copies of this license document, and changing it is allowed as long
-	 as the name is changed.
-	 
-	 DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
-	 TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-	 
-	  0. You just DO WHAT THE FUCK YOU WANT TO.
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+Version 2, December 2004
+ 
+Copyright (C) 2004 Sam Hocevar
+14 rue de Plaisance, 75014 Paris, France
+Everyone is permitted to copy and distribute verbatim or modified
+copies of this license document, and changing it is allowed as long
+as the name is changed.
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+You just DO WHAT THE FUCK YOU WANT TO.
