@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Win32;
 using ServiceStack.Text;
 using SourceChord.Lighty;
 
@@ -12,39 +11,33 @@ namespace PSO2ModManager {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
-    {
+    public partial class MainWindow : MetroWindow {
         public ModManager Mods { get; set; }
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter ();
         private DispatcherTimer updatesTimer;
 
         private ProgressDialogController DownloadProgressDialog;
 
-
-
         public MainWindow () {
-            if (ModManager.CheckForSettings())
-            {
-                Mods = new ModManager();
-            }
-            else
-            {
-                ShowMessageBox("This is a very early version of the mod tool," +
+            if (ModManager.CheckForSettings ()) {
+                Mods = new ModManager ();
+            } else {
+                MessageBox.Show ("This is a very early version of the mod tool," +
                     "so it looks like crap, and while it shouldn't, it could" +
                     "make your pso2 explode in a thousand darkers.\n Also remember" +
                     "that Sega doesn't approve of mods, so don't come crying to" +
                     "Rupi if they ban you.  You've been warmed \n -Rupi ",
                     "Important!");
-                Mods = new ModManager(GetPSO2Dir());
+                Mods = new ModManager (GetPSO2Dir ());
             }
+
+            InitializeComponent ();
 
             Mods.OnDownloadPercentPercentChanged += DownloadProgress;
             Mods.OnDownloadComplete += DownloadComplete;
             Mods.OnSelectionChanged += ModChanged;
 
-            InitializeComponent();
-
-            ValidateUrlInput();
+            ValidateUrlInput ();
 
             // For some reason RegisterJsObject doesn't work so we're stream a json object 
             // to the page title, once we have a new download action.
@@ -55,14 +48,16 @@ namespace PSO2ModManager {
         /// Callback to update the Download progressbar.
         /// </summary>
         public void DownloadProgress (int value) {
-            DownloadProgressDialog.SetProgress(System.Convert.ToDouble(value*0.01));
+            DownloadProgressDialog.SetProgress (System.Convert.ToDouble (value * 0.01));
         }
 
         /// <summary>
         /// Starts a mod download.
         /// </summary>
         private async void DownloadMod (string url) {
-            DownloadProgressDialog = await this.ShowProgressAsync("Please wait...", "Now downloading mod.");
+            DownloadProgressDialog = await this.ShowProgressAsync ("Please wait...", "Now downloading mod.");
+            DownloadProgressDialog.SetIndeterminate ();
+            //DownloadProgressDialog.SetCancelable(true);
 
             if (DownloadProgressDialog.IsCanceled)
                 return; //canceled progressdialog auto closes.
@@ -70,7 +65,7 @@ namespace PSO2ModManager {
             if (!Mods.Downloading) {
                 Mods.DownloadMod (url);
             } else {
-                ShowMessageBox("Currently downloading another mod. Please wait until it's installed", "Error");
+                ShowMessageBox ("Currently downloading another mod. Please wait until it's installed", "Error");
             }
         }
 
@@ -78,7 +73,7 @@ namespace PSO2ModManager {
         /// Updates a mod
         /// </summary>
         private void UpdateSelectedMod () {
-            DownloadBar.Visibility = Visibility.Visible;
+            //DownloadBar.Visibility = Visibility.Visible;
             Mods.UpdateMod ();
         }
 
@@ -86,16 +81,16 @@ namespace PSO2ModManager {
         /// Callback when the download progress
         /// </summary>
         private void DownloadComplete (bool success, string errorMessage = null) {
-            DownloadProgressDialog.SetIndeterminate();
+            DownloadProgressDialog.SetIndeterminate ();
             if (!success) {
-                ShowMessageBox(errorMessage, "Error downloading mod");
+                ShowMessageBox (errorMessage, "Error downloading mod");
             } else {
                 DownloadUrlTextbox.Text = "";
                 ValidateUrlInput ();
                 InstalledModsTab.Focus ();
-                
+
             }
-            DownloadProgressDialog.CloseAsync();
+            DownloadProgressDialog.CloseAsync ();
         }
 
         /// <summary>
@@ -115,15 +110,18 @@ namespace PSO2ModManager {
         public string GetPSO2Dir () {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir (folderPath)) {
-                System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog ();
-                folderBrowserDialog1.Description = "Select the pso2 data/win32 directory";
-                if (folderBrowserDialog1.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
-                    folderPath = folderBrowserDialog1.SelectedPath;
+                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog ();
+                fbd.Description = "Select the pso2 data/win32 directory";
+                fbd.RootFolder = Environment.SpecialFolder.MyComputer;
+                fbd.ShowNewFolderButton = false;
+
+                if (fbd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
+                    folderPath = fbd.SelectedPath;
                 } else {
-                    Environment.Exit (0);
+                    Environment.Exit (-1);
                 }
                 if (!Helpers.ValidatePSO2Dir (folderPath)) {
-                    ShowMessageBox("This doesn't looks like the pso2 data/win32 folder. Try again", "Error");
+                    MessageBox.Show ("This doesn't looks like the pso2 data/win32 folder. Try again", "Error");
                 }
             }
             return folderPath;
@@ -149,7 +147,6 @@ namespace PSO2ModManager {
         /// Asks the mod manager to check for updates
         /// </summary>
         private async void CheckForUpdates () {
-
             var controller = await this.ShowProgressAsync ("Please wait...", "Now checking update.");
             controller.SetIndeterminate ();
 
@@ -172,32 +169,26 @@ namespace PSO2ModManager {
         }
 
         private void UpdateCheckError (string message) {
-            ShowMessageBox(message, "Error downloading mod");
+            ShowMessageBox (message, "Error downloading mod");
         }
 
-        private async void ShowMessageBox( string message,string title)
-        {
-            MessageDialogResult result = await this.ShowMessageAsync(title, message);
+        private async void ShowMessageBox (string message, string title) {
+            MessageDialogResult result = await this.ShowMessageAsync (title, message);
         }
 
         private void FindAndInstallMod () {
-            OpenFileDialog fd = new OpenFileDialog ();
+            System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog ();
 
             // Set filter options and filter index.
             fd.Filter = "PSO2 Mod files (.zip)|*.zip";
             fd.FilterIndex = 1;
-
             fd.Multiselect = true;
 
-            // Call the ShowDialog method to show the dialog box.
-            bool? userClickedOK = fd.ShowDialog ();
-
             // Process input if the user clicked OK.
-            if (userClickedOK == true) {
+            if (fd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
                 Mods.AddLocalMod (fd.FileName);
                 InstalledModsTab.Focus ();
             }
-
         }
 
         #region Input Events
@@ -263,12 +254,24 @@ namespace PSO2ModManager {
 
         #endregion Input Events
 
-        private void ModImage_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
+        private void ModImage_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
             // show FrameworkElement.
-            var image = new Image();
+            var image = new Image ();
             image.Source = ModImage.Source;
-            LightBox.Show(this, image);
+            LightBox.Show (this, image);
+        }
+
+        private void Browser_LoadingStateChanged (object sender, CefSharp.LoadingStateChangedEventArgs e) {
+            /*
+            if (e.IsLoading)
+            {
+                StatusBarText.Content = "Loading...";
+            }
+            else
+            {
+                StatusBarText.Content = "PSO2 Mod Tool"; 
+            }
+            */
         }
     }
 }
