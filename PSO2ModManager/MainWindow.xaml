@@ -1,38 +1,51 @@
-﻿<Window x:Class="PSO2ModManager.MainWindow" 
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-	xmlns:local="clr-namespace:PSO2ModManager" 
-	xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf" 
-	xmlns:fa="http://schemas.fontawesome.io/icons/" 
-    Title="PSO2 Mod tool" Icon="iconbleh.ico" Name="BaseWindow" Visibility="Visible">
-	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-	</Window.Resources>
-	<Grid>
-		<!-- Body and Status bar Grid -->
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right">
-			<Button x:Name="CheckForUpdatesBtn" Content="Check for Updates" Click="CheckForUpdatesBtn_Click" />
-			<Button x:Name="InstallLocalModBtn" Content="Open a mod file" Click="InstallLocalModBtn_Click" />
-		</StackPanel>
-		<!-- Content -->
-		<TabControl x:Name="tabControl" Grid.Row="1">
-			<TabItem Header="Installed Mods" x:Name="InstalledModsTab">
-				<Grid>
-					<!--Mod Manager Tab Grid-->
-					<Grid.RowDefinitions>
-						<RowDefinition/>
-                        <RowDefinition Height="100"/>
+﻿<Controls:MetroWindow x:Class="PSO2ModManager.MainWindow" 
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:cefSharp="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf" 
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+    Title="PSO2 Mod tool" Width="800" Height="600" Icon="iconbleh.ico" 
+    GlowBrush="{StaticResource AccentColorBrush}" Name="BaseWindow">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button x:Name="CheckForUpdatesBtn" Click="CheckForUpdatesBtn_Click">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="CheckboxMarkedCircleOutline" />
+                    <TextBlock Margin="2,0,0,0">Check for Updates</TextBlock>
+                </StackPanel>
+            </Button>
+            <Button x:Name="InstallLocalModBtn" Click="InstallLocalModBtn_Click">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="FolderUpload" />
+                    <TextBlock Margin="2,0,0,0">Open a mod file</TextBlock>
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Grid>
+        <!-- Body and Status bar Grid -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!-- Content -->
+        <Controls:MetroAnimatedSingleRowTabControl x:Name="tabControl" Grid.Row="0">
+            <TabItem Header="Installed Mods" x:Name="InstalledModsTab">
+                <Grid>
+                    <!--Mod Manager Tab Grid-->
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="400*"/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition Height="150*"/>
                         <RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+                    </Grid.RowDefinitions>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50*" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="5" />
                             <ColumnDefinition Width="50*" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
@@ -40,11 +53,12 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Label x:Name="AvailableModsLabel" Content="Available mods" Grid.Column="0" Grid.Row="0" />
-                        <ListBox x:Name="AvailableModsList" SelectionChanged="AvailableModsList_SelectionChanged" ItemsSource="{Binding Mods.AvailableMods, ElementName=BaseWindow}" Grid.Column="0" Grid.Row="1">
+                        <ListBox Grid.Column="0" Grid.Row="1" x:Name="AvailableModsList" SelectionChanged="AvailableModsList_SelectionChanged" ItemsSource="{Binding Mods.AvailableMods, ElementName=BaseWindow}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <fa:ImageAwesome Icon="Cog" Spin="True" Height="12" Width="12" Foreground="#FF6C6C6C" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <!--fa:ImageAwesome Icon="Cog" Spin="True" Height="12" Width="12" Foreground="#FF6C6C6C" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" /-->
+                                        <iconPacks:PackIconMaterial Kind="Settings" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="#FF6C6C6C" />
                                         <TextBlock Padding="0" Text="{Binding ToolInfo}" FontStyle="Italic" Foreground="#FF6C6C6C" />
                                         <TextBlock Padding="5,0,5,0" Text="{Binding Name}" />
                                     </StackPanel>
@@ -52,12 +66,13 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                         <GridSplitter Grid.Column="1" Grid.RowSpan="2" HorizontalAlignment="Stretch" />
-                        <Label x:Name="InstalledModsLabel" Content="Installed mods" Grid.Column="2" Grid.Row="0" />
-                        <ListBox x:Name="InstalledModsList" SelectionChanged="InstalledModsList_SelectionChanged" ItemsSource="{Binding Mods.InstalledMods, ElementName=BaseWindow}" Grid.Column="2" Grid.Row="1">
+                        <Label Grid.Column="2" Grid.Row="0" x:Name="InstalledModsLabel" Content="Installed mods" />
+                        <ListBox Grid.Column="2" Grid.Row="1" x:Name="InstalledModsList" SelectionChanged="InstalledModsList_SelectionChanged" ItemsSource="{Binding Mods.InstalledMods, ElementName=BaseWindow}">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <fa:ImageAwesome Icon="Cog" Spin="True" Height="12" Width="12" Foreground="#FF6C6C6C" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <!--fa:ImageAwesome Icon="Cog" Spin="True" Height="12" Width="12" Foreground="#FF6C6C6C" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" /-->
+                                        <iconPacks:PackIconMaterial Kind="Settings" Visibility="{Binding Busy, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         <TextBlock Padding="0" Text="{Binding ToolInfo}" FontStyle="Italic" Foreground="#FF6C6C6C" />
                                         <TextBlock Padding="5,0,5,0" Text="{Binding Name}" />
                                     </StackPanel>
@@ -65,73 +80,96 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </Grid>
+                    <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch"/>
                     <!---Infomation-->
-					<Grid Grid.Row="1">
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="200" />
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="auto"/>
-						</Grid.ColumnDefinitions>
-						<Image x:Name="ModImage" VerticalAlignment="Top" Stretch="UniformToFill" Source="{Binding SelectedPresenter.Thumbnail, ElementName=BaseWindow}" Grid.Column="0" />
-                        <cefSharp:ChromiumWebBrowser Address="{Binding SelectedPresenter.Description, ElementName=BaseWindow}" x:Name="ModDescriptionTxt" Grid.Column="1"  Margin="2" />
-						<StackPanel Grid.Column="2">
-							<Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanDelete, ElementName=BaseWindow}" x:Name="DeleteBtn" Content="Delete Mod" Click="DeleteBtn_Click" />
-							<Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanUpdate, ElementName=BaseWindow}" x:Name="UpdateBtn" Content="Update" Click="UpdateBtn_Click" />
-							<Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanInstallUninstall, ElementName=BaseWindow}" x:Name="InstallUninstallBtn" Content="{Binding SelectedPresenter.InstallUpdateBtnValue, ElementName=BaseWindow}" Click="InstallUninstallBtn_Click" />
-						</StackPanel>
-					</Grid>
-					<!-- Button -->
-					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-						<Button x:Name="ViewSiteBtn" Content="View on PSO2 Mod DB" Click="ViewSiteBtn_Click" IsEnabled="{Binding SelectedPresenter.CanViewOnline, ElementName=BaseWindow}" Margin="2"/>
-						<ComboBox x:Name="ModTargetCombo" MinWidth="142" Margin="2" />
-						<ComboBox x:Name="ModOptionCombo" MinWidth="142" Margin="2" />
-					</StackPanel>
-				</Grid>
-			</TabItem>
-			<TabItem Header="Search/Install mods" x:Name="SearchModsTab">
-				<Grid x:Name="BrowserGrid">
-					<cefSharp:ChromiumWebBrowser Address="http://pso2mod.com/?app=true" x:Name="Browser"/>
-					<Grid VerticalAlignment="Bottom" Visibility="Hidden">
-						<Grid.Resources>
-							<VisualBrush x:Key="DownloadHint" Stretch="None" AlignmentX="Left" AlignmentY="Top">
-								<VisualBrush.Visual>
-									<Grid>
-										<TextBlock FontFamily="SEGOEWP" FontWeight="Normal" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="Gray" FontStyle="Italic" Opacity="1" Text="Type the PSO2 Mod DB download url " />
-									</Grid>
-								</VisualBrush.Visual>
-							</VisualBrush>
-						</Grid.Resources>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="*" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<TextBox x:Name="DownloadUrlTextbox" Grid.ColumnSpan="2" TextChanged="DownloadUrlTextbox_TextChanged">
-							<TextBox.Style>
-								<Style TargetType="{x:Type TextBox}">
-									<Setter Property="Background" Value="Transparent" />
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding ElementName=DownloadUrlButton,Path=Text}" Value="">
-											<Setter Property="Background" Value="{StaticResource DownloadHint}" />
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</TextBox.Style>
-						</TextBox>
-						<Button x:Name="DownloadModBtn" Content="Download" Grid.Column="1" Click="DownloadModBtn_Click" />
-					</Grid>
-				</Grid>
-			</TabItem>
-		</TabControl>
-		<Grid Grid.Row="2">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="auto" />
-				<ColumnDefinition Width="auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
-			<ProgressBar x:Name="DownloadBar" IsIndeterminate="{Binding Browser.IsLoading}" Width="100" Height="16" Grid.Column="0" />
-			<Separator Grid.Column="1" />
-			<!-- TODO: Could show hover link URL here -->
-			<TextBlock Grid.Column="2"/>
-		</Grid>
-	</Grid>
-</Window>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="ModImage" VerticalAlignment="Top" Source="{Binding SelectedPresenter.Thumbnail, ElementName=BaseWindow}" Grid.Column="0" Cursor="Hand" MouseDown="ModImage_MouseDown" />
+                        <cefSharp:ChromiumWebBrowser Address="{Binding SelectedPresenter.Description, ElementName=BaseWindow}" x:Name="ModDescriptionTxt" Grid.Column="1" Margin="2" />
+                        <StackPanel Grid.Column="2">
+                            <Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanDelete, ElementName=BaseWindow}" x:Name="DeleteBtn" Click="DeleteBtn_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="TableRowRemove" />
+                                    <TextBlock Margin="2,0,0,0">Delete Mod</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanUpdate, ElementName=BaseWindow}" x:Name="UpdateBtn" Click="UpdateBtn_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Update" />
+                                    <TextBlock Margin="2,0,0,0">Update</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <Button Margin="2" IsEnabled="{Binding SelectedPresenter.CanInstallUninstall, ElementName=BaseWindow}" x:Name="InstallUninstallBtn" Click="InstallUninstallBtn_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Puzzle" />
+                                    <TextBlock Margin="2,0,0,0" Text="{Binding SelectedPresenter.InstallUpdateBtnValue, ElementName=BaseWindow}"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                    <!-- Button -->
+                    <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button x:Name="ViewSiteBtn"  Click="ViewSiteBtn_Click" IsEnabled="{Binding SelectedPresenter.CanViewOnline, ElementName=BaseWindow}" Margin="2">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Web" />
+                                <TextBlock Margin="2,0,0,0">View on PSO2 Mod DB</TextBlock>
+                            </StackPanel>
+                        </Button>
+                        <ComboBox x:Name="ModTargetCombo" MinWidth="142" Margin="2" />
+                        <ComboBox x:Name="ModOptionCombo" MinWidth="142" Margin="2" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Search/Install mods" x:Name="SearchModsTab">
+                <Grid x:Name="BrowserGrid">
+                    <cefSharp:ChromiumWebBrowser Address="http://pso2mod.com/?app=true" x:Name="Browser"/>
+                    <Grid Height="43" VerticalAlignment="Bottom" Visibility="Hidden">
+                        <Grid.Resources>
+                            <VisualBrush x:Key="DownloadHint" Stretch="None" AlignmentX="Left" AlignmentY="Top">
+                                <VisualBrush.Transform>
+                                    <TranslateTransform X="5" Y="7" />
+                                </VisualBrush.Transform>
+                                <VisualBrush.Visual>
+                                    <Grid HorizontalAlignment="Left">
+                                        <TextBlock FontFamily="SEGOEWP"  FontSize="10"   FontWeight="Normal"
+                           HorizontalAlignment="Left" VerticalAlignment="Center"
+                           Foreground="Gray" FontStyle="Italic" Opacity="1"
+                           Text="Type the PSO2 Mod DB download url " />
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="481*" />
+                            <ColumnDefinition Width="88" />
+                            <ColumnDefinition Width="130" />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="DownloadModBtn" Content="Download" Grid.Column="2" Margin="8,10,10,0" VerticalAlignment="Top" Height="25" Click="DownloadModBtn_Click" />
+                        <TextBox x:Name="DownloadUrlTextbox" Height="25" Grid.Column="0"  VerticalAlignment="Top" Margin="10,10,10,0" Grid.ColumnSpan="2" TextChanged="DownloadUrlTextbox_TextChanged">
+                            <TextBox.Style>
+                                <Style TargetType="{x:Type TextBox}">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=DownloadUrlButton,Path=Text}" Value="">
+                                            <Setter Property="Background" Value="{StaticResource DownloadHint}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+                    </Grid>
+                    <ProgressBar x:Name="DownloadBar" Height="25" VerticalAlignment="Bottom" Visibility="Hidden" />
+                </Grid>
+            </TabItem>
+        </Controls:MetroAnimatedSingleRowTabControl>
+        <StatusBar Grid.Row="1">
+            <!-- TODO: Could show hover link URL here -->
+            <StatusBarItem>PSO2 Mod Tool</StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Controls:MetroWindow>
