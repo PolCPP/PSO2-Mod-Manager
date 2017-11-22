@@ -262,16 +262,19 @@ namespace PSO2ModManager {
         }
 
         private void Browser_LoadingStateChanged (object sender, CefSharp.LoadingStateChangedEventArgs e) {
-            /*
             if (e.IsLoading)
             {
-                StatusBarText.Content = "Loading...";
+                this.Dispatcher.Invoke(() => {
+                    ProgressRing.Visibility = Visibility.Visible;
+                });
             }
             else
             {
-                StatusBarText.Content = "PSO2 Mod Tool"; 
+                this.Dispatcher.Invoke(() =>
+                {
+                    ProgressRing.Visibility = Visibility.Hidden;
+                });
             }
-            */
         }
     }
 }
