@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -15,8 +17,7 @@ namespace PSO2ModManager {
         public ModManager Mods { get; set; }
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter ();
         private DispatcherTimer updatesTimer;
-
-        private ProgressDialogController DownloadProgressDialog;
+        private InlineDialog d;
 
         public MainWindow () {
             if (ModManager.CheckForSettings ()) {
@@ -32,10 +33,8 @@ namespace PSO2ModManager {
             }
 
             InitializeComponent ();
-
-            Mods.OnDownloadPercentPercentChanged += DownloadProgress;
-            Mods.OnDownloadComplete += DownloadComplete;
             Mods.OnSelectionChanged += ModChanged;
+            d = InlineDialog.Instance();
 
             ValidateUrlInput ();
 
@@ -48,49 +47,51 @@ namespace PSO2ModManager {
         /// Callback to update the Download progressbar.
         /// </summary>
         public void DownloadProgress (int value) {
-            DownloadProgressDialog.SetProgress (System.Convert.ToDouble (value * 0.01));
+            d.UpdateProgressDialogValue(System.Convert.ToDouble (value * 0.01));
         }
 
         /// <summary>
         /// Starts a mod download.
         /// </summary>
-        private async void DownloadMod (string url) {
-            DownloadProgressDialog = await this.ShowProgressAsync ("Please wait...", "Now downloading mod.");
-            DownloadProgressDialog.SetIndeterminate ();
-            //DownloadProgressDialog.SetCancelable(true);
-
-            if (DownloadProgressDialog.IsCanceled)
-                return; //canceled progressdialog auto closes.
-
-            if (!Mods.Downloading) {
-                Mods.DownloadMod (url);
-            } else {
-                ShowMessageBox ("Currently downloading another mod. Please wait until it's installed", "Error");
+        private async Task DownloadMod (string url) {
+            if (Mods.Downloading){
+                await d.PromptAsync("Error", "Currently downloading another mod. Please wait until it's installed");
+                return;
             }
+
+            Mods.OnDownloadStart += DownloadStart;
+            Mods.OnDownloadPercentPercentChanged += DownloadProgress;
+            Mods.OnDownloadComplete += DownloadComplete;
+            await Mods.DownloadMod(url);
+            Mods.OnDownloadPercentPercentChanged -= DownloadProgress;
+            Mods.OnDownloadComplete -= DownloadComplete;
+            Mods.OnDownloadStart -= DownloadStart;
+        }
+
+        private async void DownloadStart()
+        {
+            await d.OpenProgressDialog("Please wait...", "Now downloading mod.");
         }
 
         /// <summary>
         /// Updates a mod
         /// </summary>
-        private void UpdateSelectedMod () {
-            //DownloadBar.Visibility = Visibility.Visible;
-            Mods.UpdateMod ();
+        private async void UpdateSelectedMod () {
+            await Mods.UpdateMod ();
         }
 
         /// <summary>
         /// Callback when the download progress
         /// </summary>
-        private void DownloadComplete (bool success, string errorMessage = null) {
-            DownloadProgressDialog.SetIndeterminate ();
+        private async void DownloadComplete (bool success, string errorMessage = null) {
             if (!success) {
-                ShowMessageBox (errorMessage, "Error downloading mod");
+                await d.PromptAsync("Error downloading mod", errorMessage);
             } else {
-                DownloadUrlTextbox.Text = "";
-                ValidateUrlInput ();
-                InstalledModsTab.Focus ();
-
+                InstalledModsTab.Focus();
             }
-            DownloadProgressDialog.CloseAsync ();
+            DownloadUrlTextbox.Text = "";
+            ValidateUrlInput ();
+            await d.CloseProgressDialog();
         }
 
         /// <summary>
@@ -147,15 +148,11 @@ namespace PSO2ModManager {
         /// Asks the mod manager to check for updates
         /// </summary>
         private async void CheckForUpdates () {
-            var controller = await this.ShowProgressAsync ("Please wait...", "Now checking update.");
-            controller.SetIndeterminate ();
+            await d.OpenProgressDialog ("Please wait...", "Now checking update.");
 
             Mods.OnError += UpdateCheckError;
             bool success = await Mods.CheckForUpdates ();
             Mods.OnError -= UpdateCheckError;
-
-            if (controller.IsCanceled)
-                return; //canceled progressdialog auto closes.
 
             if (success) {
                 CheckForUpdatesBtn.IsEnabled = false;
@@ -163,17 +160,12 @@ namespace PSO2ModManager {
                 updatesTimer.Tick += new EventHandler (ReenableUpdates);
                 updatesTimer.Interval = new TimeSpan (0, 5, 0);
                 updatesTimer.Start ();
+                await d.CloseProgressDialog();
             }
-
-            await controller.CloseAsync ();
         }
 
-        private void UpdateCheckError (string message) {
-            ShowMessageBox (message, "Error downloading mod");
-        }
-
-        private async void ShowMessageBox (string message, string title) {
-            MessageDialogResult result = await this.ShowMessageAsync (title, message);
+        private async void UpdateCheckError (string message) {
+            await d.PromptAsync ("Error downloading mod", message);
         }
 
         private void FindAndInstallMod () {
@@ -197,8 +189,8 @@ namespace PSO2ModManager {
             ValidateUrlInput ();
         }
 
-        private void DownloadModBtn_Click (object sender, RoutedEventArgs e) {
-            DownloadMod (DownloadUrlTextbox.Text);
+        private async void DownloadModBtn_Click (object sender, RoutedEventArgs e) {
+            await DownloadMod(DownloadUrlTextbox.Text);
         }
 
         private void CheckForUpdatesBtn_Click (object sender, RoutedEventArgs e) {
@@ -233,14 +225,14 @@ namespace PSO2ModManager {
             System.Diagnostics.Process.Start ("http://pso2mod.com/?p=" + SelectedPresenter.Id);
         }
 
-        private void Browser_TitleChanged (object sender, DependencyPropertyChangedEventArgs e) {
+        private async void Browser_TitleChanged (object sender, DependencyPropertyChangedEventArgs e) {
             DownloadAction duh = new DownloadAction ();
             duh.Url = "http://google.com";
             try {
                 JsonSerializer.SerializeToString<DownloadAction> (duh);
                 DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction> (e.NewValue.ToString ());
                 if (da.Url != null) {
-                    DownloadMod (da.Url);
+                    await DownloadMod(da.Url);
                 }
             } catch {
                 // Not valid json: Note it would be better to just run a json validation method,
@@ -254,27 +246,91 @@ namespace PSO2ModManager {
 
         #endregion Input Events
 
+        /// <summary>
+        /// Show Thumnail
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ModImage_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
             // show FrameworkElement.
             var image = new Image ();
             image.Source = ModImage.Source;
             LightBox.Show (this, image);
         }
-
+        /// <summary>
+        /// Show Loading ProgressRing in Build-in WebBrowser
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Browser_LoadingStateChanged (object sender, CefSharp.LoadingStateChangedEventArgs e) {
-            if (e.IsLoading)
-            {
-                this.Dispatcher.Invoke(() => {
+            if (e.IsLoading) {
+                this.Dispatcher.Invoke (() => {
                     ProgressRing.Visibility = Visibility.Visible;
                 });
-            }
-            else
-            {
-                this.Dispatcher.Invoke(() =>
-                {
+            } else {
+                this.Dispatcher.Invoke (() => {
                     ProgressRing.Visibility = Visibility.Hidden;
                 });
             }
         }
+
+        #region DialogTask
+        private sealed class InlineDialog
+        {
+            // Singleton
+            private static readonly InlineDialog _singleInstance = new InlineDialog();
+            // Progress Dialog Object
+            public ProgressDialogController ProgressDlgCtl;
+            // Parent Window
+            private MainWindow w;
+            // Check Multiple Dialog
+            private bool multiple;
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            private InlineDialog()
+            {
+                w = (MainWindow)App.Current.MainWindow;
+            }
+            /// <summary>
+            /// Get Instance
+            /// </summary>
+            /// <returns></returns>
+            public static InlineDialog Instance()
+            {
+                return _singleInstance;
+            }
+            /// <summary>
+            /// Show Message Box
+            /// </summary>
+            /// <param name="title"></param>
+            /// <param name="message"></param>
+            /// <param name="style"></param>
+            /// <param name="settings"></param>
+            /// <returns></returns>
+            public async Task<MessageDialogResult> PromptAsync(string title, string message, MessageDialogStyle style = MessageDialogStyle.Affirmative, MetroDialogSettings settings = null)
+            {
+                return await w.ShowMessageAsync(title, message, style, settings);
+            }
+            public async Task OpenProgressDialog(string title, string message, bool isCancellable = false)
+            {
+                Console.WriteLine("Open Progress Dialog.");
+                if (multiple) return;
+                ProgressDlgCtl = await w.ShowProgressAsync(title, message, isCancellable) as ProgressDialogController;
+                ProgressDlgCtl.SetIndeterminate();
+                multiple = true;
+            }
+            public async Task CloseProgressDialog(bool continueOnCaptureContext = false)
+            {
+                await ProgressDlgCtl.CloseAsync().ConfigureAwait(continueOnCaptureContext);
+                multiple = false;
+                Console.WriteLine("Close Progress Dialog.");
+            }
+            public void UpdateProgressDialogValue(double value)
+            {
+                ProgressDlgCtl.SetProgress(value);
+            }
+        }
+        #endregion
     }
 }
