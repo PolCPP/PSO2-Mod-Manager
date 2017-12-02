@@ -10,8 +10,7 @@
 
 namespace PSO2ModManager.Properties {
     using System;
-    
-    
+
     /// <summary>
     ///   ローカライズされた文字列などを検索するための、厳密に型指定されたリソース クラスです。
     /// </summary>
@@ -19,44 +18,205 @@ namespace PSO2ModManager.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute ("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute ()]
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute ()]
     internal class Resources {
-        
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
-        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
-        }
-        
+
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute ("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
+        internal Resources () { }
+
         /// <summary>
         ///   このクラスで使用されているキャッシュされた ResourceManager インスタンスを返します。
         /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        [global::System.ComponentModel.EditorBrowsableAttribute (global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
-                if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("PSO2ModManager.Properties.Resources", typeof(Resources).Assembly);
+                if (object.ReferenceEquals (resourceMan, null)) {
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager ("PSO2ModManager.Properties.Resources", typeof (Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
-        [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
+        [global::System.ComponentModel.EditorBrowsableAttribute (global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+
+        /// <summary>
+        ///   Check for Updates に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CommandButton_CheckUpdate {
+            get {
+                return ResourceManager.GetString ("CommandButton.CheckUpdate", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Open a mod file に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CommandButton_OpenMod {
+            get {
+                return ResourceManager.GetString ("CommandButton.OpenMod", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string CommandButton_Setting {
+            get {
+                return ResourceManager.GetString ("CommandButton.Setting", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///    に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string FolderBrowser_Text {
+            get {
+                return ResourceManager.GetString ("FolderBrowser.Text", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Available mods に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_AvailableMods {
+            get {
+                return ResourceManager.GetString ("ModTab.AvailableMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Delete Mod に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_Button_Delete {
+            get {
+                return ResourceManager.GetString ("ModTab.Button.Delete", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Install に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_Button_Install {
+            get {
+                return ResourceManager.GetString ("ModTab.Button.Install", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Uninstall に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_Button_Uninstall {
+            get {
+                return ResourceManager.GetString ("ModTab.Button.Uninstall", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Update に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_Button_Update {
+            get {
+                return ResourceManager.GetString ("ModTab.Button.Update", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   View on PSO2 Mod DB に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_Button_VisitSite {
+            get {
+                return ResourceManager.GetString ("ModTab.Button.VisitSite", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Installed mods に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string ModTab_InstalledMods {
+            get {
+                return ResourceManager.GetString ("ModTab.InstalledMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Color に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Settings_Color {
+            get {
+                return ResourceManager.GetString ("Settings.Color", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Language に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Settings_Language {
+            get {
+                return ResourceManager.GetString ("Settings.Language", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Theme に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Settings_Theme {
+            get {
+                return ResourceManager.GetString ("Settings.Theme", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Settings に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Settings_Title {
+            get {
+                return ResourceManager.GetString ("Settings.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Search/Install Mods に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Tab_BrowseMods {
+            get {
+                return ResourceManager.GetString ("Tab.BrowseMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Installed Mods に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Tab_LocalMods {
+            get {
+                return ResourceManager.GetString ("Tab.LocalMods", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Click here to zoom image. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        internal static string Tooltip_Thumbnail {
+            get {
+                return ResourceManager.GetString ("Tooltip.Thumbnail", resourceCulture);
             }
         }
     }

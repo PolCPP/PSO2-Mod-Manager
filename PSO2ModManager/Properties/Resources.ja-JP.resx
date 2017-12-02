@@ -118,57 +118,54 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Settings.Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>設定</value>
   </data>
   <data name="Settings.Language" xml:space="preserve">
-    <value>Language</value>
+    <value>言語</value>
   </data>
   <data name="Settings.Theme" xml:space="preserve">
-    <value>Theme</value>
+    <value>テーマ</value>
   </data>
   <data name="Settings.Color" xml:space="preserve">
-    <value>Color</value>
+    <value>色</value>
   </data>
   <data name="ModTab.AvailableMods" xml:space="preserve">
-    <value>Available mods</value>
+    <value>利用可能なMod</value>
   </data>
   <data name="ModTab.InstalledMods" xml:space="preserve">
-    <value>Installed mods</value>
+    <value>インストール済みのMod</value>
   </data>
   <data name="Tab.LocalMods" xml:space="preserve">
-    <value>Installed Mods</value>
+    <value>ローカルのMod</value>
   </data>
   <data name="Tab.BrowseMods" xml:space="preserve">
-    <value>Search/Install Mods</value>
+    <value>Modのインストールと検索</value>
   </data>
   <data name="CommandButton.CheckUpdate" xml:space="preserve">
-    <value>Check for Updates</value>
+    <value>更新を確認</value>
   </data>
   <data name="CommandButton.OpenMod" xml:space="preserve">
-    <value>Open a mod file</value>
+    <value>Modを開く</value>
   </data>
   <data name="CommandButton.Setting" xml:space="preserve">
-    <value>Settings</value>
+    <value>設定</value>
   </data>
   <data name="ModTab.Button.Delete" xml:space="preserve">
-    <value>Delete Mod</value>
+    <value>Modを削除</value>
   </data>
   <data name="ModTab.Button.Install" xml:space="preserve">
-    <value>Install</value>
+    <value>インストール</value>
   </data>
   <data name="ModTab.Button.Uninstall" xml:space="preserve">
-    <value>Uninstall</value>
+    <value>アンインストール</value>
   </data>
   <data name="ModTab.Button.Update" xml:space="preserve">
-    <value>Update</value>
+    <value>更新</value>
   </data>
   <data name="ModTab.Button.VisitSite" xml:space="preserve">
-    <value>View on PSO2 Mod DB</value>
+    <value>PSO2 Mod DBで確認</value>
   </data>
   <data name="Tooltip.Thumbnail" xml:space="preserve">
-    <value>Click here to zoom image.</value>
-  </data>
-  <data name="FolderBrowser.Text" xml:space="preserve">
-    <value />
+    <value>ここをクリックすると画像を拡大します。</value>
   </data>
 </root>
