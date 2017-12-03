@@ -168,7 +168,43 @@
   <data name="Tooltip.Thumbnail" xml:space="preserve">
     <value>Click here to zoom image.</value>
   </data>
-  <data name="FolderBrowser.Text" xml:space="preserve">
-    <value />
+  <data name="FolderBrowser.SelectPso2Dir" xml:space="preserve">
+    <value>Select the pso2 data/win32 directory</value>
+  </data>
+  <data name="Dialog.Downloading" xml:space="preserve">
+    <value>Now downloading.</value>
+  </data>
+  <data name="Dialog.WaitTitle" xml:space="preserve">
+    <value>Please wait...</value>
+  </data>
+  <data name="Error.DownloadingTitle" xml:space="preserve">
+    <value>An error occurred when downlading mod(s).</value>
+  </data>
+  <data name="Error.MultipleDownloadProcess" xml:space="preserve">
+    <value>Currently downloading another mod(s).Please wait until it's installed.</value>
+  </data>
+  <data name="Error.Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Dialog.CheckingUpdate" xml:space="preserve">
+    <value>Now checking update...</value>
+  </data>
+  <data name="Error.CheckingUpdate" xml:space="preserve">
+    <value>An error occurred when checking for updates.</value>
+  </data>
+  <data name="Error.NotCompatible" xml:space="preserve">
+    <value>Mod not compatible with mod tool.</value>
+  </data>
+  <data name="FileDialog.Filter" xml:space="preserve">
+    <value>PSO2 Mod files</value>
+  </data>
+  <data name="Mod.Broken" xml:space="preserve">
+    <value>(Broken)</value>
+  </data>
+  <data name="Mod.Local" xml:space="preserve">
+    <value>(Local)</value>
+  </data>
+  <data name="Mod.Update" xml:space="preserve">
+    <value>(Update Available)</value>
   </data>
 </root>

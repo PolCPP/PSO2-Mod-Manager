@@ -1,27 +1,49 @@
-﻿using System;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using ServiceStack.Text;
+using SourceChord.Lighty;
+using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using ServiceStack.Text;
-using SourceChord.Lighty;
 using WPFLocalizeExtension.Engine;
 
-namespace PSO2ModManager {
+namespace PSO2ModManager
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow {
+    public partial class MainWindow : MetroWindow, INotifyPropertyChanged {
+        #region INotifyPropertyChanged Implementation
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises a new <see cref="E:INotifyPropertyChanged.PropertyChanged"/> event.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        protected void RaisePropertyChanged (string propertyName) {
+            if (PropertyChanged != null)
+                PropertyChanged (this, new PropertyChangedEventArgs (propertyName));
+        }
+        #endregion
         public ModManager Mods { get; set; }
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter ();
         private DispatcherTimer updatesTimer;
         private InlineDialog d;
-        private string locale;
 
         public MainWindow () {
+            // Initilalize Inline Dialog
+            d = InlineDialog.Instance ();
+
+            LocalizeDictionary.Instance.Culture = new CultureInfo (App.locale);
+
+            // Initialize Mod Manager
             if (ModManager.CheckForSettings ()) {
                 Mods = new ModManager ();
             } else {
@@ -33,30 +55,25 @@ namespace PSO2ModManager {
                     "Important!");
                 Mods = new ModManager (GetPSO2Dir ());
             }
+
             InitializeComponent ();
 
             Mods.OnSelectionChanged += ModChanged;
-
-            // Initilalize Inline Dialog
-            d = InlineDialog.Instance ();
-
-            // i18n settings
-            locale = CultureInfo.CurrentCulture.ToString ();
-            LocalizeDictionary.Instance.Culture = new CultureInfo (locale);
-            Browser.Address = String.Format ("http://pso2mod.com/?app={0}&lang={1}", true, locale);
 
             ValidateUrlInput ();
 
             // For some reason RegisterJsObject doesn't work so we're stream a json object 
             // to the page title, once we have a new download action.
             Browser.TitleChanged += Browser_TitleChanged;
+            Browser.BrowserSettings.AcceptLanguageList = App.locale;
+            Browser.Address = String.Format ("http://pso2mod.com/?app={0}&lang={1}", "true", App.locale.Substring (0, 2));
         }
 
         /// <summary>
         /// Callback to update the Download progressbar.
         /// </summary>
         public void DownloadProgress (int value) {
-            d.UpdateProgressDialogValue (System.Convert.ToDouble (value * 0.01));
+            d.UpdateProgressDialogValue (Convert.ToDouble (value * 0.01));
         }
 
         /// <summary>
@@ -64,7 +81,7 @@ namespace PSO2ModManager {
         /// </summary>
         private async Task DownloadMod (string url) {
             if (Mods.Downloading) {
-                await d.PromptAsync ("Error", "Currently downloading another mod. Please wait until it's installed");
+                await d.PromptAsync (Helpers._ ("Error.Title"), Helpers._ ("Error.MultipleDownloadProcess"));
                 return;
             }
 
@@ -81,7 +98,7 @@ namespace PSO2ModManager {
         }
 
         private async void DownloadStart () {
-            await d.OpenProgressDialog ("Please wait...", "Now downloading mod.");
+            await d.OpenProgressDialog (Helpers._ ("Dialog.WaitTitle"), Helpers._ ("Dialog.Downloading"));
         }
 
         /// <summary>
@@ -96,7 +113,7 @@ namespace PSO2ModManager {
         /// </summary>
         private async void DownloadComplete (bool success, string errorMessage = null) {
             if (!success) {
-                await d.PromptAsync ("Error downloading mod", errorMessage);
+                await d.PromptAsync (Helpers._ ("Error.DownloadingTitle"), errorMessage);
             } else {
                 InstalledModsTab.Focus ();
             }
@@ -123,9 +140,9 @@ namespace PSO2ModManager {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir (folderPath)) {
                 System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog ();
-                fbd.Description = "Select the pso2 data/win32 directory";
+                fbd.Description = Helpers._ ("FolderBrowser.SelectPso2Dir");
                 fbd.RootFolder = Environment.SpecialFolder.MyComputer;
-                fbd.SelectedPath = Helpers.detectPSODir ();
+                fbd.SelectedPath = Helpers.DetectPSODir () + "\\data\\win32";
                 fbd.ShowNewFolderButton = false;
 
                 if (fbd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
@@ -160,7 +177,7 @@ namespace PSO2ModManager {
         /// Asks the mod manager to check for updates
         /// </summary>
         private async void CheckForUpdates () {
-            await d.OpenProgressDialog ("Please wait...", "Now checking update.");
+            await d.OpenProgressDialog (Helpers._ ("Dialog.WaitTitle"), Helpers._ ("Dialog.CheckingUpdate"));
 
             Mods.OnError += UpdateCheckError;
             bool success = await Mods.CheckForUpdates ();
@@ -177,14 +194,14 @@ namespace PSO2ModManager {
         }
 
         private async void UpdateCheckError (string message) {
-            await d.PromptAsync ("Error downloading mod", message);
+            await d.PromptAsync (Helpers._ ("Error.CheckingUpdate"), message);
         }
 
         private void FindAndInstallMod () {
             System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog ();
 
             // Set filter options and filter index.
-            fd.Filter = "PSO2 Mod files (.zip)|*.zip";
+            fd.Filter = Helpers._ ("FileDialog.Filter") + " (.zip)|*.zip";
             fd.FilterIndex = 1;
             fd.Multiselect = true;
 
@@ -288,7 +305,7 @@ namespace PSO2ModManager {
             if (e.IsLoading) {
                 this.Dispatcher.Invoke (() => {
                     ProgressRing.Visibility = Visibility.Visible;
-                    StatusBarText.Content = "Now Loading " + Browser.Address + ".";
+                    StatusBarText.Content = "Now Loading...";
                 });
             } else {
                 this.Dispatcher.Invoke (() => {

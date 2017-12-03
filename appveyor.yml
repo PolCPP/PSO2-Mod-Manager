@@ -6,6 +6,9 @@ before_build:
 build:
   verbosity: minimal
 artifacts:
-- path: \PSO2ModManager\bin\x86\Release\*
-  name: PSO2ModManager.$(GitVersion_LegacySemVerPadded)
+- path: \PSO2ModManager\bin\x86\Release\**\*
+  name: PSO2ModManager
+  type: zip
+- path: \PSO2ModManager\bin\x86\Release\**\*
+  name: PSO2ModManager
   type: zip

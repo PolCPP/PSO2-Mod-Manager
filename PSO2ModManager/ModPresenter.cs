@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Text;
 using System.ComponentModel;
+using System.Text;
 
-namespace PSO2ModManager
-{
-    public class ModPresenter : INotifyPropertyChanged
-    {
+namespace PSO2ModManager {
+    public class ModPresenter : INotifyPropertyChanged {
         public string Id {
             get {
                 return id;
             }
             private set {
                 id = value;
-                NotifyPropertyChanged("Id");
-                NotifyPropertyChanged("CanViewOnline");
+                NotifyPropertyChanged ("Id");
+                NotifyPropertyChanged ("CanViewOnline");
             }
         }
 
@@ -23,7 +21,7 @@ namespace PSO2ModManager
             }
             private set {
                 thumbnail = value;
-                NotifyPropertyChanged("Thumbnail");
+                NotifyPropertyChanged ("Thumbnail");
             }
         }
 
@@ -33,7 +31,7 @@ namespace PSO2ModManager
             }
             private set {
                 description = value;
-                NotifyPropertyChanged("Description");
+                NotifyPropertyChanged ("Description");
             }
         }
 
@@ -43,7 +41,7 @@ namespace PSO2ModManager
             }
             private set {
                 name = value;
-                NotifyPropertyChanged("Name");
+                NotifyPropertyChanged ("Name");
             }
         }
 
@@ -53,7 +51,7 @@ namespace PSO2ModManager
             }
             private set {
                 canDelete = value;
-                NotifyPropertyChanged("CanDelete");
+                NotifyPropertyChanged ("CanDelete");
             }
         }
 
@@ -63,7 +61,7 @@ namespace PSO2ModManager
             }
             private set {
                 canUpdate = value;
-                NotifyPropertyChanged("CanUpdate");
+                NotifyPropertyChanged ("CanUpdate");
             }
         }
 
@@ -73,7 +71,7 @@ namespace PSO2ModManager
             }
             private set {
                 canInstallUninstall = value;
-                NotifyPropertyChanged("CanInstallUninstall");
+                NotifyPropertyChanged ("CanInstallUninstall");
             }
         }
 
@@ -83,7 +81,7 @@ namespace PSO2ModManager
             }
             private set {
                 installUpdateBtnValue = value;
-                NotifyPropertyChanged("InstallUpdateBtnValue");
+                NotifyPropertyChanged ("InstallUpdateBtnValue");
             }
         }
 
@@ -103,20 +101,20 @@ namespace PSO2ModManager
         private bool installed = false;
         private string installUpdateBtnValue = "Install";
 
-        protected void NotifyPropertyChanged(String propertyName) {
+        protected void NotifyPropertyChanged (String propertyName) {
             if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                PropertyChanged (this, new PropertyChangedEventArgs (propertyName));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void Setup(Mod m, bool mInstalled) {
+        public void Setup (Mod m, bool mInstalled) {
             if (m == null) {
                 installed = false;
                 Id = string.Empty;
                 Thumbnail = string.Empty;
                 Description = string.Empty;
-                InstallUpdateBtnValue = "Install";
+                InstallUpdateBtnValue = Helpers._ ("ModTab.Button.Install");
                 CanInstallUninstall = false;
                 CanUpdate = false;
                 CanDelete = false;
@@ -125,11 +123,11 @@ namespace PSO2ModManager
                 Id = m.Id;
                 Thumbnail = AppDomain.CurrentDomain.BaseDirectory + "\\thumbnails\\" + m.Thumbnail;
                 //Description = '<!DOCTYPE html><html><head><meta charset='UTF-8' /><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css\" /></head><style>.sharedaddy{display:none;}</style><body>" + String.Format("<p><strong>{0} by {1}</strong></p><p>{2}</p></body></html>", m.Name, m.Author, m.Description);
-                Description = "data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes("<!DOCTYPE html><html><head><meta charset='UTF-8' /><style>html {color:#222; font-size:1em; line-height: 1.4;}body{margin: 0;} h1{font-size:2em; margin:0;} .sharedaddy{display:none;}</style></head><body>" + String.Format("<h1>{0} <small>by {1}</small></h1><p>{2}</p></body></html>", m.Name, m.Author, m.Description)));
+                Description = "data:text/html;base64," + Convert.ToBase64String (Encoding.UTF8.GetBytes ("<!DOCTYPE html><html><head><meta charset='UTF-8' /><style>html {color:#222; font-size:12px; line-height: 1.4;font-family: -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", \"Segoe UI\", \"Yu Gothic\", YuGothic, sans-serif;}body{margin: 0;} h1{font-size:2em; margin:0;} .sharedaddy{display:none;}</style></head><body>" + String.Format ("<h1>{0} <small>by {1}</small></h1><p>{2}</p></body></html>", m.Name, m.Author, m.Description)));
                 if (mInstalled) {
-                    InstallUpdateBtnValue = "Uninstall";
+                    InstallUpdateBtnValue = Helpers._ ("ModTab.Button.Uninstall");
                 } else {
-                    InstallUpdateBtnValue = "Install";
+                    InstallUpdateBtnValue = Helpers._ ("ModTab.Button.Install");
                 }
                 CanInstallUninstall = true;
                 CanUpdate = m.UpdateAvailable;

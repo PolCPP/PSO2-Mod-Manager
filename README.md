@@ -23,7 +23,7 @@ This is a list of upcoming features in no specific order:
 * [ ] Local mods (basically open a zip with a mod without having to upload it to PSO2Mod)
 * [ ] Advanced mod formats ([check this thread](http://www.pso-world.com/forums/showthread.php?232819-PSO2-Mod-Thread&p=3356258#post3356258)) 
 * [ ] Download a mod automatically by clicking a link on the site instead of copypasing the url
-* [ ] As with the site, Japanese localization.
+* [x] As with the site, Japanese localization.
 
 ## License
 

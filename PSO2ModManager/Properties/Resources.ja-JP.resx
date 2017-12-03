@@ -13,19 +13,7 @@
     Example:
     
     ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
+    <resheader name="resmimetype">text/microsoft-resx</resheader><resheader name="version">2.0</resheader><resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader><resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader><data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data><data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data><data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64"><value>[base64 mime encoded serialized .NET Framework object]</value></data><data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64"><value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value><comment>This is a comment</comment></data>
                 
     There are any number of "resheader" rows that contain simple 
     name/value pairs.
@@ -167,5 +155,44 @@
   </data>
   <data name="Tooltip.Thumbnail" xml:space="preserve">
     <value>ここをクリックすると画像を拡大します。</value>
+  </data>
+  <data name="FolderBrowser.SelectPso2Dir" xml:space="preserve">
+    <value>Pso2のdata/win32ディレクトリを指定して下さい。</value>
+  </data>
+  <data name="Dialog.Downloading" xml:space="preserve">
+    <value>ダウロードしています。</value>
+  </data>
+  <data name="Dialog.WaitTitle" xml:space="preserve">
+    <value>しばらくお待ちください。</value>
+  </data>
+  <data name="Error.DownloadingTitle" xml:space="preserve">
+    <value>Modをダウンロードしている最中にエラーが発生しました。</value>
+  </data>
+  <data name="Error.MultipleDownloadProcess" xml:space="preserve">
+    <value>他のModのダウンロードが終わっていないようです。インストールが完了するまでお待ち下さい。</value>
+  </data>
+  <data name="Error.Title" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="Dialog.CheckingUpdate" xml:space="preserve">
+    <value>更新を確認しています…。</value>
+  </data>
+  <data name="Error.CheckingUpdate" xml:space="preserve">
+    <value>更新を確認している最中にエラーが発生しました。</value>
+  </data>
+  <data name="Error.NotCompatible" xml:space="preserve">
+    <value>このModはこのツールと互換性がありません。</value>
+  </data>
+  <data name="FileDialog.Filter" xml:space="preserve">
+    <value>PSO2Modファイル</value>
+  </data>
+  <data name="Mod.Broken" xml:space="preserve">
+    <value>(破損)</value>
+  </data>
+  <data name="Mod.Local" xml:space="preserve">
+    <value>(ローカル)</value>
+  </data>
+  <data name="Mod.Update" xml:space="preserve">
+    <value>(更新あり)</value>
   </data>
 </root>

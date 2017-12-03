@@ -12,6 +12,7 @@
             <Setter Property="Template" Value="{StaticResource DarkGlassTemplate}" />
             <Setter Property="ItemContainerStyle" Value="{StaticResource PhotoCardStyle}" />
         </Style>
+        <FontFamily x:Key="DefaultFont">Yu Gothic UI, Meiryo UI</FontFamily>
     </Window.Resources>
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -154,8 +155,10 @@
         <Controls:Flyout x:Name="settingsFlyout" AreAnimationsEnabled="True" Header="{lex:Loc Key=Settings.Title}" Theme="Accent" Position="Right" HorizontalAlignment="Right" Visibility="Hidden">
             <!-- Language -->
             <StackPanel Margin="10">
-                <TextBlock VerticalAlignment="Center" Text="{lex:Loc Key=Settings.Language}" />
-                <ComboBox ItemsSource="{Binding Path=SupportedLanguages, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayName" SelectedItem="{Binding Path=SelectedLanguage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsSynchronizedWithCurrentItem="False"></ComboBox>
+                <StackPanel>
+                    <TextBlock VerticalAlignment="Center" Text="{lex:Loc Key=Settings.Language}" />
+                    <ComboBox ItemsSource="{Binding Path=SupportedLanguages, UpdateSourceTrigger=PropertyChanged}" DisplayMemberPath="DisplayName" SelectedItem="{Binding Path=SelectedLanguage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsSynchronizedWithCurrentItem="False"></ComboBox>
+                </StackPanel>
             </StackPanel>
         </Controls:Flyout>
     </Grid>
