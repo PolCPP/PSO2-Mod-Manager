@@ -24,8 +24,8 @@ namespace PSO2ModManager
             get { return selectedMod; }
             set {
                 selectedMod = value;
-                OnSelectionChanged?.Invoke();
-			}
+                OnSelectionChanged?.Invoke(this, null);
+            }
         }
 
         private Mod m;
@@ -34,19 +34,30 @@ namespace PSO2ModManager
         private readonly string zipPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\";
         private readonly string apiGetURL = "http://pso2mod.com/wp-json/wp/v2/posts/";
 
-        public delegate void SelectedModChangedEventHandler();
+        public delegate void SelectedModChangedEventHandler(object sender, EventArgs e);
 
         public event SelectedModChangedEventHandler OnSelectionChanged;
 
-        public delegate void GenericErrorHandler(string message);
+        public delegate void GenericErrorHandler(object sender, EventArgs e);
 
         public event GenericErrorHandler OnError;
 
-        public delegate void DownloadCompleteEventHandler(bool success, string errorMessage = null);
+        public class OnErrorArgs : EventArgs
+        {
+            public String Message { get; set; }
+        }
+
+        public delegate void DownloadCompleteEventHandler(object sender, EventArgs e);
 
         public event DownloadCompleteEventHandler OnDownloadComplete;
 
-        public delegate void DownloadPercentChanged(int percent);
+        public class OnDownloadCompleteArgs : EventArgs
+        {
+            public bool Success { get; set; }
+            public String ErrorMessage { get; set; }
+        }
+
+        public delegate void DownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e);
 
         public event DownloadPercentChanged OnDownloadPercentPercentChanged;
 
@@ -93,18 +104,24 @@ namespace PSO2ModManager
             string modExtractPath;
             string modString = string.Empty;
             using (WebClient wc = new WebClient()) {
+                dynamic Data = new OnDownloadCompleteArgs
+                {
+                    Success = false,
+                };
                 wc.DownloadProgressChanged += WCDownloadPercentChanged;
                 try {
                     modString = await wc.DownloadStringTaskAsync(url);
                 } catch (WebException ex) {
-                    OnDownloadComplete?.Invoke(false, ex.Message);
+                    Data.ErrorMessage = ex.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 JsonObject json = JsonObject.Parse(modString);
                 // Let's make sure the slug doesn't have weird stuff.
                 json["slug"] = string.Join(" ", json["slug"].Split(Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).ToArray()));
                 if (json["compatible"] != "Yes") {
-                    OnDownloadComplete?.Invoke(false, "Mod not compatible with mod tool");
+                    Data.ErrorMessage = "Mod not compatible with mod tool";
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 m = new Mod(
@@ -138,18 +155,21 @@ namespace PSO2ModManager
                 try {
                     await wc.DownloadFileTaskAsync(new System.Uri(json["image"]), modImagePath);
                 } catch (WebException we) {
-                    OnDownloadComplete?.Invoke(false, we.Message);
+                    Data.ErrorMessage = we.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 try {
                     await wc.DownloadFileTaskAsync(new System.Uri(m.File), modZipPath);
                 } catch (WebException we) {
-                    OnDownloadComplete?.Invoke(false, we.Message);
+                    Data.ErrorMessage = we.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 UnpackMod(modZipPath, modExtractPath);
                 AvailableMods.Add(m);
-                OnDownloadComplete?.Invoke(true);
+                Data.Success = true;
+                OnDownloadComplete?.Invoke(this, Data);
                 UpdateSettings();
             }
         }
@@ -198,13 +218,14 @@ namespace PSO2ModManager
         /// progress updates accordingly
         /// </summary>
         private void WCDownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e) {
-            OnDownloadPercentPercentChanged?.Invoke(e.ProgressPercentage);
+            OnDownloadPercentPercentChanged?.Invoke(sender, e);
         }
 
         /// <summary>
         /// Event hook to make sure that downloding is false after download finishes
         /// </summary>
-        private void AfterDownload(bool result, string message = null) {
+        private void AfterDownload(object sender, EventArgs e)
+        {
             Downloading = false;
         }
 
@@ -282,7 +303,11 @@ namespace PSO2ModManager
                 try {
                     modString = await wc.DownloadStringTaskAsync(apiGetURL + m.Id);
                 } catch (WebException ex) {
-                    OnError?.Invoke(m.Name + "error:" + ex.Message);
+                    dynamic Data = new OnErrorArgs
+                    {
+                        Message = m.Name + "error:" + ex.Message
+                    };
+                    OnError?.Invoke(this, Data);
                     m.Busy = false;
                     return true;
                 }

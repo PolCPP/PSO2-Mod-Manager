@@ -42,8 +42,8 @@ namespace PSO2ModManager
         /// <summary>
         /// Callback to update the Download progressbar.
         /// </summary>
-        public void DownloadProgress(int value) {
-            DownloadBar.Value = value;
+        public void DownloadProgress(object sender, System.Net.DownloadProgressChangedEventArgs e) {
+            DownloadBar.Value = e.ProgressPercentage;
         }
 
         /// <summary>
@@ -69,9 +69,21 @@ namespace PSO2ModManager
         /// <summary>
         /// Callback when the download progress
         /// </summary>
-        private void DownloadComplete(bool success, string errorMessage = null) {
-            if (!success) {
-                MessageBox.Show(errorMessage, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
+        private void DownloadComplete(object sender, EventArgs e)
+        {
+            dynamic u = (ModManager.OnDownloadCompleteArgs)e;
+            bool Success = false;
+            string ErrorMessage = null;
+
+            if (u != null) {
+                Success = u.Success;
+                ErrorMessage = u.ErrorMessage;
+            } else {
+                return;
+            }
+
+            if (!Success) {
+                MessageBox.Show(ErrorMessage, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
             } else {
                 DownloadUrlTextbox.Text = "";
                 ValidateUrlInput();
@@ -115,7 +127,8 @@ namespace PSO2ModManager
         /// <summary>
         /// Updates the mod presenter when the selected mod changes.
         /// </summary>
-        public void ModChanged() {
+        public void ModChanged(object sender, EventArgs e)
+        {
             SelectedPresenter.Setup(Mods.SelectedMod, Mods.IsInstalled(Mods.SelectedMod));
         }
 
@@ -144,8 +157,15 @@ namespace PSO2ModManager
             }
         }
 
-        private void UpdateCheckError(string message) {
-            MessageBox.Show(message, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
+        private void UpdateCheckError(object sender, EventArgs e)
+        {
+            dynamic u = (ModManager.OnErrorArgs)e;
+            String Message = "";
+            if (u != null)
+            {
+                Message = u.Message;
+            }
+            MessageBox.Show(Message, "Error downloading mod", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void FindAndInstallMod() {
