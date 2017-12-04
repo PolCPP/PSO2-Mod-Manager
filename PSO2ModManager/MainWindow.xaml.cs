@@ -36,6 +36,7 @@ namespace PSO2ModManager
         private DispatcherTimer updatesTimer;
         private InlineDialog d;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.MessageBox.Show(System.String,System.String)")]
         public MainWindow() {
             // Initilalize Inline Dialog
             d = InlineDialog.Instance();
@@ -46,7 +47,7 @@ namespace PSO2ModManager
             if (ModManager.CheckForSettings()) {
                 Mods = new ModManager();
             } else {
-                MessageBox.Show ("This is a very early version of the mod tool," +
+                MessageBox.Show("This is a very early version of the mod tool," +
                     "so it looks like crap, and while it shouldn't, it could" +
                     "make your pso2 explode in a thousand darkers.\n Also remember" +
                     "that Sega doesn't approve of mods, so don't come crying to" +
@@ -65,7 +66,7 @@ namespace PSO2ModManager
             // to the page title, once we have a new download action.
             Browser.TitleChanged += Browser_TitleChanged;
             Browser.BrowserSettings.AcceptLanguageList = App.locale;
-            Browser.Address = String.Format ("http://pso2mod.com/?app={0}&lang={1}", "true", App.locale.Substring (0, 2));
+            Browser.Address = String.Format(CultureInfo.InvariantCulture, "http://pso2mod.com/?app={0}&lang={1}", "true", App.locale.Substring (0, 2));
         }
 
         /// <summary>
@@ -137,7 +138,7 @@ namespace PSO2ModManager
         /// Kinda validates the url.
         /// </summary>
         private void ValidateUrlInput() {
-            if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToLower().StartsWith ("http://")) {
+            if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToUpperInvariant().StartsWith("http://", StringComparison.Ordinal)) {
                 DownloadModBtn.IsEnabled = false;
             } else {
                 DownloadModBtn.IsEnabled = true;
@@ -147,6 +148,7 @@ namespace PSO2ModManager
         /// <summary>
         /// Shows a Folderbrowser dialog and gets PSO2 Directory, if it fails it closes the application.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.FolderBrowserDialog.set_SelectedPath(System.String)")]
         public string GetPSO2Dir() {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir (folderPath)) {
@@ -164,7 +166,7 @@ namespace PSO2ModManager
                     Environment.Exit (1);
                 }
                 if (!Helpers.ValidatePSO2Dir (folderPath)) {
-                    MessageBox.Show ("This doesn't looks like the pso2 data/win32 folder. Try again", "Error");
+                    MessageBox.Show(Helpers._("This doesn't looks like the pso2 data/win32 folder. Try again"), Helpers._("Error"));
                 }
             }
             return folderPath;
@@ -218,11 +220,12 @@ namespace PSO2ModManager
             await d.PromptAsync (Helpers._ ("Error.CheckingUpdate"), Message);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.FileDialog.set_Filter(System.String)")]
         private void FindAndInstallMod() {
             System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog
             {
                 // Set filter options and filter index.
-                Filter = Helpers._ ("FileDialog.Filter") + " (.zip)|*.zip",
+                Filter = Helpers._("FileDialog.Filter") + " (.zip)|*.zip",
                 FilterIndex = 1,
                 Multiselect = true
             };
@@ -275,7 +278,7 @@ namespace PSO2ModManager
         private void ViewSiteBtn_Click (object sender, RoutedEventArgs e) {
             //string url = "http://pso2mod.com/?lang={1}&p={0}";
             string url = "http://pso2mod.com/?p={0}";
-            System.Diagnostics.Process.Start (String.Format(url, SelectedPresenter.Id));
+            System.Diagnostics.Process.Start(String.Format(CultureInfo.InvariantCulture, url, SelectedPresenter.Id));
         }
 
         private async void Browser_TitleChanged (object sender, DependencyPropertyChangedEventArgs e) {

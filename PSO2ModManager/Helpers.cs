@@ -8,13 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 using WPFLocalizeExtension.Extensions;
+using System.Globalization;
+using System.Diagnostics;
 
 namespace PSO2ModManager {
     internal class Helpers {
         public static string CheckMD5 (string filename) {
             using (var md5 = MD5.Create()) {
                 using (var stream = File.OpenRead (filename)) {
-                    return string.Concat (md5.ComputeHash (stream).Select (x => x.ToString ("X2")));
+                    return string.Concat(md5.ComputeHash (stream).Select(x => x.ToString("X2", CultureInfo.InvariantCulture)));
                 }
             }
         }
@@ -34,7 +36,12 @@ namespace PSO2ModManager {
         /// <param name="key">resource name</param>
         /// <returns></returns>
         public static string _ (string key) {
-            return GetLocalizedValue<string> (key);
+            dynamic i8n = GetLocalizedValue<string>(key);
+            if (i8n == null)
+            {
+				Debugger.Break();
+            }
+            return i8n;
         }
         #endregion
         #region PSO2Dir Functions
@@ -99,9 +106,10 @@ namespace PSO2ModManager {
 
             private string destinationFile, sourceFile;
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Console.WriteLine(System.String)")]
             public FileCopy (string s, string d) {
                 //BufferCopy = new byte[sizeBufferCopy];
-                Console.WriteLine ("From: " + s + " To: " + d);
+                Console.WriteLine("From: " + s + " To: " + d);
                 destinationFile = d;
                 sourceFile = s;
             }

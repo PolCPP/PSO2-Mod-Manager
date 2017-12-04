@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 
 namespace PSO2ModManager {
@@ -102,8 +103,7 @@ namespace PSO2ModManager {
         private string installUpdateBtnValue = "Install";
 
         protected void NotifyPropertyChanged (String propertyName) {
-            if (PropertyChanged != null)
-                PropertyChanged (this, new PropertyChangedEventArgs (propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -123,7 +123,7 @@ namespace PSO2ModManager {
                 Id = m.Id;
                 Thumbnail = AppDomain.CurrentDomain.BaseDirectory + "\\thumbnails\\" + m.Thumbnail;
                 //Description = '<!DOCTYPE html><html><head><meta charset='UTF-8' /><link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.css\" /></head><style>.sharedaddy{display:none;}</style><body>" + String.Format("<p><strong>{0} by {1}</strong></p><p>{2}</p></body></html>", m.Name, m.Author, m.Description);
-                Description = "data:text/html;base64," + Convert.ToBase64String (Encoding.UTF8.GetBytes ("<!DOCTYPE html><html><head><meta charset='UTF-8' /><style>html {color:#222; font-size:12px; line-height: 1.4;font-family: -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", \"Segoe UI\", \"Yu Gothic\", YuGothic, sans-serif;}body{margin: 0;} h1{font-size:2em; margin:0;} .sharedaddy{display:none;}</style></head><body>" + String.Format ("<h1>{0} <small>by {1}</small></h1><p>{2}</p></body></html>", m.Name, m.Author, m.Description)));
+                Description = "data:text/html;base64," + Convert.ToBase64String(Encoding.UTF8.GetBytes("<!DOCTYPE html><html><head><meta charset='UTF-8' /><style>html {color:#222; font-size:12px; line-height: 1.4;font-family: -apple-system, BlinkMacSystemFont, \"Helvetica Neue\", \"Segoe UI\", \"Yu Gothic\", YuGothic, sans-serif;}body{margin: 0;} h1{font-size:2em; margin:0;} .sharedaddy{display:none;}</style></head><body>" + String.Format(CultureInfo.InvariantCulture, "<h1>{0} <small>by {1}</small></h1><p>{2}</p></body></html>", m.Name, m.Author, m.Description)));
                 if (mInstalled) {
                     InstallUpdateBtnValue = Helpers._ ("ModTab.Button.Uninstall");
                 } else {
