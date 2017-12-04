@@ -97,7 +97,7 @@ namespace PSO2ModManager
             Mods.OnDownloadStart -= DownloadStart;
         }
 
-        private async void DownloadStart () {
+        private async void DownloadStart (object sender, EventArgs e) {
             await d.OpenProgressDialog (Helpers._ ("Dialog.WaitTitle"), Helpers._ ("Dialog.Downloading"));
         }
 
@@ -151,12 +151,12 @@ namespace PSO2ModManager
         public string GetPSO2Dir () {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir (folderPath)) {
-                System.Windows.Forms.FolderBrowserDialog db = new System.Windows.Forms.FolderBrowserDialog
-                {
-                    Description = "Select the pso2 data/win32 directory"
-                    RootFolder = Environment.SpecialFolder.MyComputer;
-                    SelectedPath = Helpers.DetectPSODir () + "\\data\\win32";
-                    ShowNewFolderButton = false;
+				dynamic fbd = new System.Windows.Forms.FolderBrowserDialog
+				{
+					Description = Helpers._("Select the pso2 data/win32 directory"),
+                    RootFolder = Environment.SpecialFolder.MyComputer,
+                    SelectedPath = Helpers.DetectPSODir () + "\\data\\win32",
+                    ShowNewFolderButton = false
                 };
 
                 if (fbd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
@@ -208,7 +208,7 @@ namespace PSO2ModManager
             }
         }
 
-        private void UpdateCheckError(object sender, EventArgs e)
+        private async void UpdateCheckError(object sender, EventArgs e)
         {
             dynamic u = (ModManager.OnErrorArgs)e;
             String Message = "";
@@ -220,10 +220,10 @@ namespace PSO2ModManager
         }
 
         private void FindAndInstallMod () {
-            System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog ();
+            System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog
             {
                 // Set filter options and filter index.
-                Filter = Helpers._ ("FileDialog.Filter") + " (.zip)|*.zip";
+                Filter = Helpers._ ("FileDialog.Filter") + " (.zip)|*.zip",
                 FilterIndex = 1,
                 Multiselect = true
             };

@@ -54,7 +54,7 @@ namespace PSO2ModManager {
         public delegate void DownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e);
         public event DownloadPercentChanged OnDownloadPercentPercentChanged;
 
-        public delegate void DownloadStart ();
+        public delegate void DownloadStart(object sender, EventArgs e);
         public event DownloadStart OnDownloadStart;
 
         public ModManager (string PSO2Dir = null) {
