@@ -8,11 +8,11 @@ namespace PSO2ModManager {
     /// </summary>
     public partial class App : Application {
         public static string locale;
-        public App () {
+        public App() {
             // i18n settings
-            locale = CultureInfo.CurrentCulture.ToString ();
+            locale = CultureInfo.CurrentCulture.ToString();
 
-            var settings = new CefSettings ();
+            var settings = new CefSettings();
             // Uncomment for version 49
             //settings.CefCommandLineArgs.Add("disable-gpu", "1");
             //Cef.Initialize(settings, shutdownOnProcessExit: true, performDependencyCheck: true);

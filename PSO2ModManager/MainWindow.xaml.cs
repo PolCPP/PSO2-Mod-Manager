@@ -28,24 +28,23 @@ namespace PSO2ModManager
         /// </summary>
         /// <param name="propertyName">The name of the property that changed.</param>
         protected void RaisePropertyChanged (string propertyName) {
-            if (PropertyChanged != null)
-                PropertyChanged (this, new PropertyChangedEventArgs (propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
         public ModManager Mods { get; set; }
-        public ModPresenter SelectedPresenter { get; set; } = new ModPresenter ();
+        public ModPresenter SelectedPresenter { get; set; } = new ModPresenter();
         private DispatcherTimer updatesTimer;
         private InlineDialog d;
 
-        public MainWindow () {
+        public MainWindow() {
             // Initilalize Inline Dialog
-            d = InlineDialog.Instance ();
+            d = InlineDialog.Instance();
 
             LocalizeDictionary.Instance.Culture = new CultureInfo (App.locale);
 
             // Initialize Mod Manager
-            if (ModManager.CheckForSettings ()) {
-                Mods = new ModManager ();
+            if (ModManager.CheckForSettings()) {
+                Mods = new ModManager();
             } else {
                 MessageBox.Show ("This is a very early version of the mod tool," +
                     "so it looks like crap, and while it shouldn't, it could" +
@@ -53,14 +52,14 @@ namespace PSO2ModManager
                     "that Sega doesn't approve of mods, so don't come crying to" +
                     "Rupi if they ban you.  You've been warmed \n -Rupi ",
                     "Important!");
-                Mods = new ModManager (GetPSO2Dir ());
+                Mods = new ModManager (GetPSO2Dir());
             }
 
-            InitializeComponent ();
+            InitializeComponent();
 
             Mods.OnSelectionChanged += ModChanged;
 
-            ValidateUrlInput ();
+            ValidateUrlInput();
 
             // For some reason RegisterJsObject doesn't work so we're stream a json object 
             // to the page title, once we have a new download action.
@@ -104,8 +103,8 @@ namespace PSO2ModManager
         /// <summary>
         /// Updates a mod
         /// </summary>
-        private async void UpdateSelectedMod () {
-            await Mods.UpdateMod ();
+        private async void UpdateSelectedMod() {
+            await Mods.UpdateMod();
         }
 
         /// <summary>
@@ -127,18 +126,18 @@ namespace PSO2ModManager
             if (!Success) {
                 await d.PromptAsync (Helpers._("Error.DownloadingTitle"), ErrorMessage);
             } else {
-                InstalledModsTab.Focus ();
+                InstalledModsTab.Focus();
             }
             DownloadUrlTextbox.Text = "";
-            ValidateUrlInput ();
-            await d.CloseProgressDialog ();
+            ValidateUrlInput();
+            await d.CloseProgressDialog();
         }
 
         /// <summary>
         /// Kinda validates the url.
         /// </summary>
-        private void ValidateUrlInput () {
-            if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToLower ().StartsWith ("http://")) {
+        private void ValidateUrlInput() {
+            if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToLower().StartsWith ("http://")) {
                 DownloadModBtn.IsEnabled = false;
             } else {
                 DownloadModBtn.IsEnabled = true;
@@ -148,18 +147,18 @@ namespace PSO2ModManager
         /// <summary>
         /// Shows a Folderbrowser dialog and gets PSO2 Directory, if it fails it closes the application.
         /// </summary>
-        public string GetPSO2Dir () {
+        public string GetPSO2Dir() {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir (folderPath)) {
-				dynamic fbd = new System.Windows.Forms.FolderBrowserDialog
-				{
-					Description = Helpers._("Select the pso2 data/win32 directory"),
+                dynamic fbd = new System.Windows.Forms.FolderBrowserDialog
+                {
+                    Description = Helpers._("Select the pso2 data/win32 directory"),
                     RootFolder = Environment.SpecialFolder.MyComputer,
-                    SelectedPath = Helpers.DetectPSODir () + "\\data\\win32",
+                    SelectedPath = Helpers.DetectPSODir() + "\\data\\win32",
                     ShowNewFolderButton = false
                 };
 
-                if (fbd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
+                if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     folderPath = fbd.SelectedPath;
                 } else {
                     Environment.Exit (1);
@@ -184,27 +183,27 @@ namespace PSO2ModManager
         /// certain time passes, and stops the time.
         /// </summary>
         private void ReenableUpdates (object sender, EventArgs e) {
-            updatesTimer.Stop ();
+            updatesTimer.Stop();
             CheckForUpdatesBtn.IsEnabled = true;
         }
 
         /// <summary>
         /// Asks the mod manager to check for updates
         /// </summary>
-        private async void CheckForUpdates () {
+        private async void CheckForUpdates() {
             await d.OpenProgressDialog (Helpers._ ("Dialog.WaitTitle"), Helpers._ ("Dialog.CheckingUpdate"));
 
             Mods.OnError += UpdateCheckError;
-            bool success = await Mods.CheckForUpdates ();
+            bool success = await Mods.CheckForUpdates();
             Mods.OnError -= UpdateCheckError;
 
             if (success) {
                 CheckForUpdatesBtn.IsEnabled = false;
-                updatesTimer = new System.Windows.Threading.DispatcherTimer ();
+                updatesTimer = new System.Windows.Threading.DispatcherTimer();
                 updatesTimer.Tick += new EventHandler (ReenableUpdates);
                 updatesTimer.Interval = new TimeSpan (0, 5, 0);
-                updatesTimer.Start ();
-                await d.CloseProgressDialog ();
+                updatesTimer.Start();
+                await d.CloseProgressDialog();
             }
         }
 
@@ -219,7 +218,7 @@ namespace PSO2ModManager
             await d.PromptAsync (Helpers._ ("Error.CheckingUpdate"), Message);
         }
 
-        private void FindAndInstallMod () {
+        private void FindAndInstallMod() {
             System.Windows.Forms.OpenFileDialog fd = new System.Windows.Forms.OpenFileDialog
             {
                 // Set filter options and filter index.
@@ -229,16 +228,16 @@ namespace PSO2ModManager
             };
 
             // Process input if the user clicked OK.
-            if (fd.ShowDialog () == System.Windows.Forms.DialogResult.OK) {
+            if (fd.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                 Mods.AddLocalMod (fd.FileName);
-                InstalledModsTab.Focus ();
+                InstalledModsTab.Focus();
             }
         }
 
         #region Input Events
 
         private void DownloadUrlTextbox_TextChanged (object sender, TextChangedEventArgs e) {
-            ValidateUrlInput ();
+            ValidateUrlInput();
         }
 
         private async void DownloadModBtn_Click (object sender, RoutedEventArgs e) {
@@ -246,11 +245,11 @@ namespace PSO2ModManager
         }
 
         private void CheckForUpdatesBtn_Click (object sender, RoutedEventArgs e) {
-            CheckForUpdates ();
+            CheckForUpdates();
         }
 
         private void InstallUninstallBtn_Click (object sender, RoutedEventArgs e) {
-            Mods.ToggleMod ();
+            Mods.ToggleMod();
         }
 
         private void AvailableModsList_SelectionChanged (object sender, SelectionChangedEventArgs e) {
@@ -266,17 +265,17 @@ namespace PSO2ModManager
         }
 
         private void DeleteBtn_Click (object sender, RoutedEventArgs e) {
-            Mods.Delete ();
+            Mods.Delete();
         }
 
         private void UpdateBtn_Click (object sender, RoutedEventArgs e) {
-            UpdateSelectedMod ();
+            UpdateSelectedMod();
         }
 
         private void ViewSiteBtn_Click (object sender, RoutedEventArgs e) {
-            //string url = "http://pso2mod.com/?lang={0}&p={1}";
-            string url = "http://pso2mod.com/?p={1}";
-            System.Diagnostics.Process.Start (String.Format (url, CultureInfo.CurrentCulture, SelectedPresenter.Id));
+            //string url = "http://pso2mod.com/?lang={1}&p={0}";
+            string url = "http://pso2mod.com/?p={0}";
+            System.Diagnostics.Process.Start (String.Format(url, SelectedPresenter.Id));
         }
 
         private async void Browser_TitleChanged (object sender, DependencyPropertyChangedEventArgs e) {
@@ -286,7 +285,7 @@ namespace PSO2ModManager
             };
             try {
                 JsonSerializer.SerializeToString<DownloadAction> (duh);
-                DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction> (e.NewValue.ToString ());
+                DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction> (e.NewValue.ToString());
                 if (da.Url != null) {
                     await DownloadMod (da.Url);
                 }
@@ -297,7 +296,7 @@ namespace PSO2ModManager
         }
 
         private void InstallLocalModBtn_Click (object sender, RoutedEventArgs e) {
-            FindAndInstallMod ();
+            FindAndInstallMod();
         }
         /// <summary>
         /// Toggle Setting Flyout
@@ -317,8 +316,10 @@ namespace PSO2ModManager
         /// <param name="e"></param>
         private void ModImage_MouseDown (object sender, System.Windows.Input.MouseButtonEventArgs e) {
             // show FrameworkElement.
-            var image = new Image ();
-            image.Source = ModImage.Source;
+            var image = new Image
+            {
+                Source = ModImage.Source
+            };
             LightBox.Show (this, image);
         }
         /// <summary>
@@ -343,7 +344,7 @@ namespace PSO2ModManager
         #region DialogTask
         private sealed class InlineDialog {
             // Singleton
-            private static readonly InlineDialog _singleInstance = new InlineDialog ();
+            private static readonly InlineDialog _singleInstance = new InlineDialog();
             // Progress Dialog Object
             public ProgressDialogController ProgressDlgCtl;
             // Parent Window
@@ -353,14 +354,14 @@ namespace PSO2ModManager
             /// <summary>
             /// Constructor
             /// </summary>
-            private InlineDialog () {
+            private InlineDialog() {
                 w = (MainWindow) App.Current.MainWindow;
             }
             /// <summary>
             /// Get Instance
             /// </summary>
             /// <returns></returns>
-            public static InlineDialog Instance () {
+            public static InlineDialog Instance() {
                 return _singleInstance;
             }
             /// <summary>
@@ -378,11 +379,11 @@ namespace PSO2ModManager
                 Console.WriteLine ("Open Progress Dialog.");
                 if (multiple) return;
                 ProgressDlgCtl = await w.ShowProgressAsync (title, message, isCancellable) as ProgressDialogController;
-                ProgressDlgCtl.SetIndeterminate ();
+                ProgressDlgCtl.SetIndeterminate();
                 multiple = true;
             }
             public async Task CloseProgressDialog (bool continueOnCaptureContext = false) {
-                await ProgressDlgCtl.CloseAsync ().ConfigureAwait (continueOnCaptureContext);
+                await ProgressDlgCtl.CloseAsync().ConfigureAwait (continueOnCaptureContext);
                 multiple = false;
                 Console.WriteLine ("Close Progress Dialog.");
             }

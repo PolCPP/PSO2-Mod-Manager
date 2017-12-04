@@ -102,7 +102,7 @@ namespace PSO2ModManager {
         /// Checks if a mod is valid. Note: This is kinda placeholderish.
         /// Note that it doesn't check if the mod data is correct or well installed.
         /// </summary>
-        public bool isValid () {
+        public bool isValid() {
             if (Id == null || Name == null || Date == null || Description == null || Author == null || Url == null || File == null || Slug == null || Thumbnail == null) {
                 return false;
             }

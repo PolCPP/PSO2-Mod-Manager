@@ -12,7 +12,7 @@ using WPFLocalizeExtension.Extensions;
 namespace PSO2ModManager {
     internal class Helpers {
         public static string CheckMD5 (string filename) {
-            using (var md5 = MD5.Create ()) {
+            using (var md5 = MD5.Create()) {
                 using (var stream = File.OpenRead (filename)) {
                     return string.Concat (md5.ComputeHash (stream).Select (x => x.ToString ("X2")));
                 }
@@ -26,7 +26,7 @@ namespace PSO2ModManager {
         /// <param name="key"></param>
         /// <returns></returns>
         public static T GetLocalizedValue<T> (string key) {
-            return LocExtension.GetLocalizedValue<T> (Assembly.GetCallingAssembly ().GetName ().Name + ":Resources:" + key);
+            return LocExtension.GetLocalizedValue<T> (Assembly.GetCallingAssembly().GetName().Name + ":Resources:" + key);
         }
         /// <summary>
         /// Shortcut
@@ -43,7 +43,7 @@ namespace PSO2ModManager {
                 return false;
             }
             if (Path.GetFileName (PSO2Dir) != "win32" ||
-                !Directory.GetParent (Directory.GetParent (PSO2Dir).FullName).GetFiles ().Select (x => x.Name == "pso2.exe").Contains (true)) {
+                !Directory.GetParent (Directory.GetParent (PSO2Dir).FullName).GetFiles().Select (x => x.Name == "pso2.exe").Contains (true)) {
                 return false;
             }
             return true;
@@ -52,7 +52,7 @@ namespace PSO2ModManager {
         /// Detect PSO2 Dir via AIDA's registory key
         /// </summary>
         /// <returns></returns>
-        public static string DetectPSODir () {
+        public static string DetectPSODir() {
             RegistryKey regkey = Registry.CurrentUser.OpenSubKey (@"Software\AIDA", false);
             if (regkey == null) return null;
             return (string) regkey.GetValue ("PSO2Dir");
@@ -68,8 +68,8 @@ namespace PSO2ModManager {
         public async static Task DownloadPatch (string fileName, string destPath) {
             const string PATCH_BASE_URI = "http://download.pso2.jp/patch_prod/patches/data/win32/";
             var request = WebRequest.Create (PATCH_BASE_URI + fileName);
-            var response = await request.GetResponseAsync ();
-            var stream = response.GetResponseStream ();
+            var response = await request.GetResponseAsync();
+            var stream = response.GetResponseStream();
 
             using (var file = new FileStream (destPath + fileName, FileMode.OpenOrCreate, FileAccess.Write)) {
                 int read;
@@ -110,7 +110,7 @@ namespace PSO2ModManager {
             /// Copy
             /// </summary>
             /// <returns></returns>
-            public bool StartCopy () {
+            public bool StartCopy() {
                 bool retValue = false;
 
                 //improve check the validity of the file names
@@ -118,8 +118,8 @@ namespace PSO2ModManager {
                     Thread newThreadCopy = new Thread (ReadWorker);
                     Thread newThreadWrite = new Thread (WriteWorker);
 
-                    newThreadCopy.Start (); //start to read Async to BufferCopy
-                    newThreadWrite.Start (); //start to write Async from BufferCopy
+                    newThreadCopy.Start(); //start to read Async to BufferCopy
+                    newThreadWrite.Start(); //start to write Async from BufferCopy
 
                     retValue = true;
                 }
@@ -129,7 +129,7 @@ namespace PSO2ModManager {
             /// <summary>
             /// WriteWorker
             /// </summary>
-            private void WriteWorker () {
+            private void WriteWorker() {
                 //const string fileName = @"f:\AppSettingsCopy.dat";
                 UInt16 SleepTime = 10;
 
@@ -170,7 +170,7 @@ namespace PSO2ModManager {
             /// <summary>
             /// Thread to Read the file
             /// </summary>
-            private void ReadWorker () {
+            private void ReadWorker() {
                 FileStream f = File.Open (sourceFile, FileMode.Open);
 
                 UInt64 Length = (UInt64) f.Length, pos = 0;
