@@ -110,8 +110,10 @@ namespace PSO2ModManager
         public string GetPSO2Dir() {
             string folderPath = "";
             while (!Helpers.ValidatePSO2Dir(folderPath)) {
-                System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-                folderBrowserDialog1.Description = "Select the pso2 data/win32 directory";
+                System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog
+                {
+                    Description = "Select the pso2 data/win32 directory"
+                };
                 if (folderBrowserDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
                     folderPath = folderBrowserDialog1.SelectedPath;
                 } else {
@@ -169,13 +171,13 @@ namespace PSO2ModManager
         }
 
         private void FindAndInstallMod() {
-            OpenFileDialog fd = new OpenFileDialog();
-
-            // Set filter options and filter index.
-            fd.Filter = "PSO2 Mod files (.zip)|*.zip";
-            fd.FilterIndex = 1;
-
-            fd.Multiselect = true;
+            OpenFileDialog fd = new OpenFileDialog
+            {
+                // Set filter options and filter index.
+                Filter = "PSO2 Mod files (.zip)|*.zip",
+                FilterIndex = 1,
+                Multiselect = true
+            };
 
             // Call the ShowDialog method to show the dialog box.
             bool? userClickedOK = fd.ShowDialog();
@@ -231,8 +233,10 @@ namespace PSO2ModManager
         }
 
         private void Browser_TitleChanged(object sender, DependencyPropertyChangedEventArgs e) {
-            DownloadAction duh = new DownloadAction();
-            duh.Url = "http://google.com";            
+            DownloadAction duh = new DownloadAction
+            {
+                Url = "http://google.com"
+            };
             try {
                 JsonSerializer.SerializeToString<DownloadAction>(duh);
                 DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction>(e.NewValue.ToString());
