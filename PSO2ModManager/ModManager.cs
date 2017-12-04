@@ -24,9 +24,8 @@ namespace PSO2ModManager
             get { return selectedMod; }
             set {
                 selectedMod = value;
-                if (OnSelectionChanged != null)
-                    OnSelectionChanged();
-            }
+                OnSelectionChanged?.Invoke();
+			}
         }
 
         private Mod m;
@@ -53,10 +52,12 @@ namespace PSO2ModManager
 
         public ModManager(string PSO2Dir = null) {
             if (!File.Exists(Settings.SettingsPath) || PSO2Dir != null) {
-                settings = new Settings();
-                settings.PSO2Dir = PSO2Dir;
-                settings.AvailableMods = new List<Mod>();
-                settings.InstalledMods = new List<Mod>();
+                settings = new Settings
+                {
+                    PSO2Dir = PSO2Dir,
+                    AvailableMods = new List<Mod>(),
+                    InstalledMods = new List<Mod>()
+                };
             } else {
                 settings = JsonSerializer.DeserializeFromString<Settings>(File.ReadAllText(Settings.SettingsPath));
             }
@@ -96,18 +97,14 @@ namespace PSO2ModManager
                 try {
                     modString = await wc.DownloadStringTaskAsync(url);
                 } catch (WebException ex) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete(false, ex.Message);
-                    }
+                    OnDownloadComplete?.Invoke(false, ex.Message);
                     return;
                 }
                 JsonObject json = JsonObject.Parse(modString);
                 // Let's make sure the slug doesn't have weird stuff.
                 json["slug"] = string.Join(" ", json["slug"].Split(Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()).ToArray()));
                 if (json["compatible"] != "Yes") {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete(false, "Mod not compatible with mod tool");
-                    }
+                    OnDownloadComplete?.Invoke(false, "Mod not compatible with mod tool");
                     return;
                 }
                 m = new Mod(
@@ -141,24 +138,18 @@ namespace PSO2ModManager
                 try {
                     await wc.DownloadFileTaskAsync(new System.Uri(json["image"]), modImagePath);
                 } catch (WebException we) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete(false, we.Message);
-                    }
+                    OnDownloadComplete?.Invoke(false, we.Message);
                     return;
                 }
                 try {
                     await wc.DownloadFileTaskAsync(new System.Uri(m.File), modZipPath);
                 } catch (WebException we) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete(false, we.Message);
-                    }
+                    OnDownloadComplete?.Invoke(false, we.Message);
                     return;
                 }
                 UnpackMod(modZipPath, modExtractPath);
                 AvailableMods.Add(m);
-                if (OnDownloadComplete != null) {
-                    OnDownloadComplete(true);
-                }
+                OnDownloadComplete?.Invoke(true);
                 UpdateSettings();
             }
         }
@@ -207,9 +198,7 @@ namespace PSO2ModManager
         /// progress updates accordingly
         /// </summary>
         private void WCDownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e) {
-            if (OnDownloadPercentPercentChanged != null) {
-                OnDownloadPercentPercentChanged(e.ProgressPercentage);
-            }
+            OnDownloadPercentPercentChanged?.Invoke(e.ProgressPercentage);
         }
 
         /// <summary>
@@ -293,9 +282,7 @@ namespace PSO2ModManager
                 try {
                     modString = await wc.DownloadStringTaskAsync(apiGetURL + m.Id);
                 } catch (WebException ex) {
-                    if (OnError != null) {
-                        OnError(m.Name + "error:" + ex.Message);
-                    }
+                    OnError?.Invoke(m.Name + "error:" + ex.Message);
                     m.Busy = false;
                     return true;
                 }
