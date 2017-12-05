@@ -88,7 +88,7 @@ namespace PSO2ModManager {
 
         public bool CanViewOnline {
             get {
-                return id != string.Empty;
+                return String.IsNullOrEmpty(id);
             }
         }
 

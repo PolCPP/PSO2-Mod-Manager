@@ -39,7 +39,7 @@ namespace PSO2ModManager {
             dynamic i8n = GetLocalizedValue<string>(key);
             if (i8n == null)
             {
-				Debugger.Break();
+                Debugger.Break();
             }
             return i8n;
         }
@@ -122,7 +122,7 @@ namespace PSO2ModManager {
                 bool retValue = false;
 
                 //improve check the validity of the file names
-                if ((destinationFile != string.Empty) && (sourceFile != string.Empty)) {
+                if ((String.IsNullOrEmpty(destinationFile)) && (String.IsNullOrEmpty(sourceFile))) {
                     Thread newThreadCopy = new Thread (ReadWorker);
                     Thread newThreadWrite = new Thread (WriteWorker);
 

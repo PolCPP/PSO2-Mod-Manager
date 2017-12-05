@@ -47,7 +47,7 @@ namespace PSO2ModManager {
 
         public class OnDownloadCompleteArgs : EventArgs
         {
-            public bool Success { get; set; }
+            public bool Success { get; set; } = false;
             public String ErrorMessage { get; set; }
         }
 
@@ -101,10 +101,7 @@ namespace PSO2ModManager {
             string modExtractPath;
             string modString = string.Empty;
             using (WebClient wc = new WebClient()) {
-                dynamic Data = new OnDownloadCompleteArgs
-                {
-                    Success = false,
-                };
+            dynamic Data = new OnDownloadCompleteArgs();
                 OnDownloadStart?.Invoke(this, Data);
 
 
@@ -370,7 +367,7 @@ namespace PSO2ModManager {
                     //Console.WriteLine ("Backup FROM: " + settings.PSO2Dir + "\\" + fileName + "  TO: " + mBackupPath + "\\" + fileName);
                     //Console.WriteLine ("Replace FROM: " + mPath + "\\" + fileName + "  TO: " + settings.PSO2Dir + "\\" + fileName);
 
-                    if (!Mod.ModSettingsFiles.Contains (fileName)) {
+                    if (!Mod.modSettingsFiles.Contains(fileName)) {
                         var BackupTask = new Helpers.FileCopy (destin, backup);
                         var ApplyModTask = new Helpers.FileCopy (from, destin);
 

@@ -24,7 +24,7 @@ namespace PSO2ModManager
         private static void OnHtmlChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e) {
             WebBrowser webBrowser = dependencyObject as WebBrowser;
             var value = "&nbsp;";
-            if (e.NewValue as string != "")
+            if (System.String.IsNullOrEmpty(e.NewValue as string))
                 value = e.NewValue as string;
             if (webBrowser != null)
                 webBrowser.NavigateToString(value);

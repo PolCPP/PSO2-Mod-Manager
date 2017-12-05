@@ -136,6 +136,7 @@
     </ApplicationDefinition>
     <Compile Include="BrowserBehavior.cs" />
     <Compile Include="DownloadAction.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="ModManager.cs" />

@@ -41,7 +41,7 @@ namespace PSO2ModManager
             // Initilalize Inline Dialog
             d = InlineDialog.Instance();
 
-            LocalizeDictionary.Instance.Culture = new CultureInfo (App.locale);
+            LocalizeDictionary.Instance.Culture = new CultureInfo(App.locale);
 
             // Initialize Mod Manager
             if (ModManager.CheckForSettings()) {
@@ -138,7 +138,7 @@ namespace PSO2ModManager
         /// Kinda validates the url.
         /// </summary>
         private void ValidateUrlInput() {
-            if (DownloadUrlTextbox.Text == "" || !DownloadUrlTextbox.Text.ToUpperInvariant().StartsWith("http://", StringComparison.Ordinal)) {
+            if (String.IsNullOrEmpty(DownloadUrlTextbox.Text) || !DownloadUrlTextbox.Text.ToUpperInvariant().StartsWith("http://", StringComparison.Ordinal)) {
                 DownloadModBtn.IsEnabled = false;
             } else {
                 DownloadModBtn.IsEnabled = true;
