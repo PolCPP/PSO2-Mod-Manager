@@ -21,16 +21,12 @@ build:
 before_build:
 - cmd: nuget restore -Verbosity quiet
 
-artifacts:
-- path: \PSO2ModManager\bin\x86\Release\**\*
-  name: PSO2ModManager.x86.Release
-  type: zip
-- path: \PSO2ModManager\bin\x86\Debug\**\*
-  name: PSO2ModManager.x86.Debug
-  type: zip
-- path: \PSO2ModManager\bin\x64\Release\**\*
-  name: PSO2ModManager.x64.Release
-  type: zip
-- path: \PSO2ModManager\bin\x64\Debug\**\*
-  name: PSO2ModManager.x64.Debug
-  type: zip
+after_build:
+- cmd: git rev-parse --short %APPVEYOR_REPO_COMMIT%>%TMP%\gitshort.txt
+- cmd: set /P GITSHORT=<%TMP%\gitshort.txt
+- set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%CONFIGURATION%.7z
+- cmd: cd "PSO2ModManager\bin\"
+- cmd: cd "%PLATFORM%\%CONFIGURATION%"
+- cmd: 7z a %BUILD_ARCHIVE% *.* -xr!.gitignore
+- appveyor PushArtifact %BUILD_ARCHIVE%
+- cmd: cd ..\..\..\..
