@@ -24,7 +24,7 @@ before_build:
 after_build:
 - cmd: git rev-parse --short %APPVEYOR_REPO_COMMIT%>%TMP%\gitshort.txt
 - cmd: set /P GITSHORT=<%TMP%\gitshort.txt
-- set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%CONFIGURATION%.7z
+- set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%PLATFORM%-%CONFIGURATION%.7z
 - cmd: cd "PSO2ModManager\bin\"
 - cmd: cd "%PLATFORM%\%CONFIGURATION%"
 - cmd: 7z a %BUILD_ARCHIVE% *.* -xr!.gitignore
