@@ -1,14 +1,36 @@
 image: Visual Studio 2017
-configuration: Release
-platform: x86
-before_build:
-- cmd: nuget restore
+
+environment:
+  EnableNuGetPackageRestore: true
+
+cache:
+- packages -> **\PSO2ModManager\packages.config
+
+platform:
+- x86
+- x64
+
+configuration:
+- Release
+- Debug
+
 build:
+  parallel: true
   verbosity: minimal
+
+before_build:
+- cmd: nuget restore -Verbosity quiet
+
 artifacts:
 - path: \PSO2ModManager\bin\x86\Release\**\*
-  name: PSO2ModManager
+  name: PSO2ModManager.x86.Release
   type: zip
-- path: \PSO2ModManager\bin\x86\Release\**\*
-  name: PSO2ModManager
+- path: \PSO2ModManager\bin\x86\Debug\**\*
+  name: PSO2ModManager.x86.Debug
+  type: zip
+- path: \PSO2ModManager\bin\x64\Release\**\*
+  name: PSO2ModManager.x64.Release
+  type: zip
+- path: \PSO2ModManager\bin\x64\Debug\**\*
+  name: PSO2ModManager.x64.Debug
   type: zip
