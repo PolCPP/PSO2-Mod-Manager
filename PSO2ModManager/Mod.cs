@@ -14,6 +14,7 @@ namespace PSO2ModManager {
         public string File { get; set; }
         public string Slug { get; set; }
         public string Thumbnail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Dictionary<string, string> ContentsMD5 { get; set; }
         public string ToolInfo { get; set; } = "";
 
@@ -26,8 +27,9 @@ namespace PSO2ModManager {
         [IgnoreDataMember]
         public static readonly string ModLocalMessage = Helpers._ ("Mod.Local");
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         [IgnoreDataMember]
-        public static readonly string[] ModSettingsFiles = new string[] { "settings.csv", "targets.csv", "options.csv" };
+        public static readonly string[] modSettingsFiles = new string[] { "settings.csv", "targets.csv", "options.csv" };
 
         [IgnoreDataMember]
         public static readonly string InstallPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\";
@@ -102,7 +104,7 @@ namespace PSO2ModManager {
         /// Checks if a mod is valid. Note: This is kinda placeholderish.
         /// Note that it doesn't check if the mod data is correct or well installed.
         /// </summary>
-        public bool isValid () {
+        public bool IsValid() {
             if (Id == null || Name == null || Date == null || Description == null || Author == null || Url == null || File == null || Slug == null || Thumbnail == null) {
                 return false;
             }
@@ -112,9 +114,7 @@ namespace PSO2ModManager {
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void NotifyPropertyChanged (String info) {
-            if (PropertyChanged != null) {
-                PropertyChanged (this, new PropertyChangedEventArgs (info));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(info));
         }
     }
 }

@@ -6,7 +6,9 @@ namespace PSO2ModManager
     public class Settings
     {
         public string PSO2Dir { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<Mod> AvailableMods { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public List<Mod> InstalledMods { get; set; }
 
         public static readonly string SettingsPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + "settings.json";
@@ -22,12 +24,12 @@ namespace PSO2ModManager
                 return false;
             }
             foreach (var m in AvailableMods) {
-                if (!m.isValid()) {
+                if (!m.IsValid()) {
                     return false;
                 }
             }
             foreach (var m in InstalledMods) {
-                if (!m.isValid()) {
+                if (!m.IsValid()) {
                     return false;
                 }
             }

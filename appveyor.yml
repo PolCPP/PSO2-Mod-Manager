@@ -1,14 +1,32 @@
 image: Visual Studio 2017
-configuration: Release
-platform: x86
-before_build:
-- cmd: nuget restore
+
+environment:
+  EnableNuGetPackageRestore: true
+
+cache:
+- packages -> **\PSO2ModManager\packages.config
+
+platform:
+- x86
+- x64
+
+configuration:
+- Release
+- Debug
+
 build:
+  parallel: true
   verbosity: minimal
-artifacts:
-- path: \PSO2ModManager\bin\x86\Release\**\*
-  name: PSO2ModManager
-  type: zip
-- path: \PSO2ModManager\bin\x86\Release\**\*
-  name: PSO2ModManager
-  type: zip
+
+before_build:
+- cmd: nuget restore -Verbosity quiet
+
+after_build:
+- cmd: git rev-parse --short %APPVEYOR_REPO_COMMIT%>%TMP%\gitshort.txt
+- cmd: set /P GITSHORT=<%TMP%\gitshort.txt
+- set BUILD_ARCHIVE=%APPVEYOR_REPO_BRANCH%-%GITSHORT%-%PLATFORM%-%CONFIGURATION%.7z
+- cmd: cd "PSO2ModManager\bin\"
+- cmd: cd "%PLATFORM%\%CONFIGURATION%"
+- cmd: 7z a %BUILD_ARCHIVE% *.* -xr!.gitignore
+- appveyor PushArtifact %BUILD_ARCHIVE%
+- cmd: cd ..\..\..\..

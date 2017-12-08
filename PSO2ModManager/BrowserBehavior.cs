@@ -20,10 +20,11 @@ namespace PSO2ModManager
             d.SetValue(HtmlProperty, value);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Controls.WebBrowser.NavigateToString(System.String)")]
         private static void OnHtmlChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e) {
             WebBrowser webBrowser = dependencyObject as WebBrowser;
             var value = "&nbsp;";
-            if (e.NewValue as string != "")
+            if (System.String.IsNullOrEmpty(e.NewValue as string))
                 value = e.NewValue as string;
             if (webBrowser != null)
                 webBrowser.NavigateToString(value);

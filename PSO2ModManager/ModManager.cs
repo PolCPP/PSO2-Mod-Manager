@@ -21,8 +21,7 @@ namespace PSO2ModManager {
             get { return selectedMod; }
             set {
                 selectedMod = value;
-                if (OnSelectionChanged != null)
-                    OnSelectionChanged ();
+                OnSelectionChanged?.Invoke(this, null);
             }
         }
 
@@ -32,27 +31,40 @@ namespace PSO2ModManager {
         private readonly string zipPath = AppDomain.CurrentDomain.BaseDirectory + "\\mods\\";
         private readonly string apiGetURL = "http://pso2mod.com/wp-json/wp/v2/posts/";
 
-        public delegate void SelectedModChangedEventHandler ();
+        public delegate void SelectedModChangedEventHandler(object sender, EventArgs e);
         public event SelectedModChangedEventHandler OnSelectionChanged;
 
-        public delegate void GenericErrorHandler (string message);
+        public delegate void GenericErrorHandler(object sender, EventArgs e);
         public event GenericErrorHandler OnError;
 
-        public delegate void DownloadCompleteEventHandler (bool success, string errorMessage = null);
+        public class OnErrorArgs : EventArgs
+        {
+            public String Message { get; set; }
+        }
+
+        public delegate void DownloadCompleteEventHandler(object sender, EventArgs e);
         public event DownloadCompleteEventHandler OnDownloadComplete;
 
-        public delegate void DownloadPercentChanged (int percent);
+        public class OnDownloadCompleteArgs : EventArgs
+        {
+            public bool Success { get; set; } = false;
+            public String ErrorMessage { get; set; }
+        }
+
+        public delegate void DownloadPercentChanged(object sender, DownloadProgressChangedEventArgs e);
         public event DownloadPercentChanged OnDownloadPercentPercentChanged;
 
-        public delegate void DownloadStart ();
+        public delegate void DownloadStart(object sender, EventArgs e);
         public event DownloadStart OnDownloadStart;
 
         public ModManager (string PSO2Dir = null) {
             if (!File.Exists (Settings.SettingsPath) || PSO2Dir != null) {
-                settings = new Settings ();
-                settings.PSO2Dir = PSO2Dir;
-                settings.AvailableMods = new List<Mod> ();
-                settings.InstalledMods = new List<Mod> ();
+                settings = new Settings
+                {
+                    PSO2Dir = PSO2Dir,
+                    AvailableMods = new List<Mod>(),
+                    InstalledMods = new List<Mod>()
+                };
             } else {
                 settings = JsonSerializer.DeserializeFromString<Settings> (File.ReadAllText (Settings.SettingsPath));
             }
@@ -62,20 +74,20 @@ namespace PSO2ModManager {
             AvailableMods = new ObservableCollection<Mod> (settings.AvailableMods);
             InstalledMods = new ObservableCollection<Mod> (settings.InstalledMods);
             OnDownloadComplete += AfterDownload;
-            UpdateSettings ();
-            CheckBrokenMods ();
+            UpdateSettings();
+            CheckBrokenMods();
             Downloading = false;
         }
 
         /// <summary>
         /// Checks that settings file is correct
         /// </summary>
-        public static bool CheckForSettings () {
+        public static bool CheckForSettings() {
             if (!File.Exists (Settings.SettingsPath)) {
                 return false;
             } else {
                 var testSettings = JsonSerializer.DeserializeFromString<Settings> (File.ReadAllText (Settings.SettingsPath));
-                return testSettings.IsValid ();
+                return testSettings.IsValid();
             }
         }
 
@@ -88,27 +100,25 @@ namespace PSO2ModManager {
             string modImagePath;
             string modExtractPath;
             string modString = string.Empty;
-            using (WebClient wc = new WebClient ()) {
-                if (OnDownloadStart != null) {
-                    OnDownloadStart ();
-                }
+            using (WebClient wc = new WebClient()) {
+            dynamic Data = new OnDownloadCompleteArgs();
+                OnDownloadStart?.Invoke(this, Data);
+
 
                 wc.DownloadProgressChanged += WCDownloadPercentChanged;
                 try {
                     modString = await wc.DownloadStringTaskAsync (url);
                 } catch (WebException ex) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete (false, ex.Message);
-                    }
+                    Data.ErrorMessage = ex.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 JsonObject json = JsonObject.Parse (modString);
                 // Let's make sure the slug doesn't have weird stuff.
-                json["slug"] = string.Join (" ", json["slug"].Split (Path.GetInvalidFileNameChars ().Concat (Path.GetInvalidPathChars ()).ToArray ()));
+                json["slug"] = string.Join (" ", json["slug"].Split (Path.GetInvalidFileNameChars().Concat (Path.GetInvalidPathChars()).ToArray()));
                 if (json["compatible"] != "Yes") {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete (false, Helpers._ ("Error.NotCompatible"));
-                    }
+                    Data.ErrorMessage = Helpers._("Error.NotCompatible");
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 m = new Mod (
@@ -142,37 +152,34 @@ namespace PSO2ModManager {
                 try {
                     await wc.DownloadFileTaskAsync (new System.Uri (json["image"]), modImagePath);
                 } catch (WebException we) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete (false, we.Message);
-                    }
+                    Data.ErrorMessage = we.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 try {
                     await wc.DownloadFileTaskAsync (new System.Uri (m.File), modZipPath);
                 } catch (WebException we) {
-                    if (OnDownloadComplete != null) {
-                        OnDownloadComplete (false, we.Message);
-                    }
+                    Data.ErrorMessage = we.Message;
+                    OnDownloadComplete?.Invoke(this, Data);
                     return;
                 }
                 UnpackMod (modZipPath, modExtractPath);
                 AvailableMods.Add (m);
-                if (OnDownloadComplete != null) {
-                    OnDownloadComplete (true);
-                }
-                UpdateSettings ();
+                Data.Success = true;
+                OnDownloadComplete?.Invoke(this, Data);
+                UpdateSettings();
             }
             Downloading = false;
         }
 
         public void AddLocalMod (string path) {
-            Mod m = new Mod (string.Empty, Path.GetFileNameWithoutExtension (path), DateTime.Now, string.Empty, string.Empty, string.Empty, string.Empty, Guid.NewGuid ().ToString ("N"), string.Empty, true);
+            Mod m = new Mod (string.Empty, Path.GetFileNameWithoutExtension (path), DateTime.Now, string.Empty, string.Empty, string.Empty, string.Empty, Guid.NewGuid().ToString ("N"), string.Empty, true);
             string modZipPath = zipPath + m.Slug + ".zip";
             string modExtractPath = Mod.InstallPath + m.Slug + "\\";
             File.Copy (path, modZipPath);
             UnpackMod (modZipPath, modExtractPath);
             AvailableMods.Add (m);
-            UpdateSettings ();
+            UpdateSettings();
         }
 
         /// <summary>
@@ -191,8 +198,8 @@ namespace PSO2ModManager {
             ZipFile.ExtractToDirectory (modZipPath, modExtractPath);
 
             // Because some people like to package the files inside a folder, let's fix this.
-            if (Directory.GetFiles (modExtractPath).Count () == 0 && Directory.GetDirectories (modExtractPath).Count () == 1) {
-                var dir = Directory.GetDirectories (modExtractPath).First ();
+            if (Directory.GetFiles (modExtractPath).Count() == 0 && Directory.GetDirectories (modExtractPath).Count() == 1) {
+                var dir = Directory.GetDirectories (modExtractPath).First();
                 var files = Directory.GetFiles (dir);
                 var dirs = Directory.GetDirectories (dir);
                 foreach (var f in files) {
@@ -211,15 +218,14 @@ namespace PSO2ModManager {
         /// progress updates accordingly
         /// </summary>
         private void WCDownloadPercentChanged (object sender, DownloadProgressChangedEventArgs e) {
-            if (OnDownloadPercentPercentChanged != null) {
-                OnDownloadPercentPercentChanged (e.ProgressPercentage);
-            }
+            OnDownloadPercentPercentChanged?.Invoke(sender, e);
         }
 
         /// <summary>
         /// Event hook to make sure that downloding is false after download finishes
         /// </summary>
-        private void AfterDownload (bool result, string message = null) {
+        private void AfterDownload(object sender, EventArgs e)
+        {
             Downloading = false;
         }
 
@@ -233,10 +239,10 @@ namespace PSO2ModManager {
         /// <summary>
         /// Installs/Uninstalls the selected mod
         /// </summary>
-        public async void ToggleMod () {
-            if (AvailableMods.Where (x => x.Slug == SelectedMod.Slug).Count () != 0) {
+        public async void ToggleMod() {
+            if (AvailableMods.Where (x => x.Slug == SelectedMod.Slug).Count() != 0) {
                 await Install (SelectedMod);
-            } else if (InstalledMods.Where (x => x.Slug == SelectedMod.Slug).Count () != 0) {
+            } else if (InstalledMods.Where (x => x.Slug == SelectedMod.Slug).Count() != 0) {
                 await Uninstall (SelectedMod);
             }
         }
@@ -244,17 +250,17 @@ namespace PSO2ModManager {
         /// <summary>
         /// Saves the settings file.
         /// </summary>
-        private void UpdateSettings () {
-            settings.AvailableMods = AvailableMods.ToList ();
-            settings.InstalledMods = InstalledMods.ToList ();
+        private void UpdateSettings() {
+            settings.AvailableMods = AvailableMods.ToList();
+            settings.InstalledMods = InstalledMods.ToList();
             File.WriteAllText (Settings.SettingsPath, JsonSerializer.SerializeToString (settings));
         }
 
         /// <summary>
         /// Checks all installed mods to see if they got broken by an update.
         /// </summary>
-        private void CheckBrokenMods () {
-            List<Mod> brokenMods = new List<Mod> ();
+        private void CheckBrokenMods() {
+            List<Mod> brokenMods = new List<Mod>();
             foreach (Mod m in InstalledMods) {
                 if (m.ContentsMD5 != null) {
                     foreach (KeyValuePair<string, string> ice in m.ContentsMD5) {
@@ -275,7 +281,7 @@ namespace PSO2ModManager {
         /// <summary>
         /// Checks for updates on all mods.
         /// </summary>
-        public async Task<bool> CheckForUpdates () {
+        public async Task<bool> CheckForUpdates() {
             bool res = true;
             foreach (Mod m in AvailableMods.Concat (InstalledMods)) {
                 res = await CheckForUpdates (m);
@@ -293,13 +299,15 @@ namespace PSO2ModManager {
             if (m.IsLocal) return true;
             m.Busy = true;
             string modString = string.Empty;
-            using (WebClient wc = new WebClient ()) {
+            using (WebClient wc = new WebClient()) {
                 try {
                     modString = await wc.DownloadStringTaskAsync (apiGetURL + m.Id);
                 } catch (WebException ex) {
-                    if (OnError != null) {
-                        OnError (m.Name + "error:" + ex.Message);
-                    }
+                    dynamic Data = new OnErrorArgs
+                    {
+                        Message = m.Name + "error:" + ex.Message
+                    };
+                    OnError?.Invoke(this, Data);
                     m.Busy = false;
                     return true;
                 }
@@ -307,7 +315,7 @@ namespace PSO2ModManager {
                 var updated = DateTime.ParseExact (json["modified"].Replace ("T", " "), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 if (updated > m.Date) {
                     m.UpdateAvailable = true;
-                    UpdateSettings ();
+                    UpdateSettings();
                 }
             }
             m.Busy = false;
@@ -317,7 +325,7 @@ namespace PSO2ModManager {
         /// <summary>
         /// Updates the selected mod.
         /// </summary>
-        public async Task UpdateMod () {
+        public async Task UpdateMod() {
             await UpdateMod (SelectedMod);
         }
 
@@ -341,7 +349,7 @@ namespace PSO2ModManager {
             // Before installing get the list of affected ice files and make sure no installed
             // mod uses the same files
             if (!ModCollision (m)) {
-                m.ContentsMD5 = new Dictionary<string, string> ();
+                m.ContentsMD5 = new Dictionary<string, string>();
                 foreach (var f in Directory.GetFiles (mPath)) {
                     var fileName = Path.GetFileName (f);
                     string from = mPath + "\\" + fileName;
@@ -359,7 +367,7 @@ namespace PSO2ModManager {
                     //Console.WriteLine ("Backup FROM: " + settings.PSO2Dir + "\\" + fileName + "  TO: " + mBackupPath + "\\" + fileName);
                     //Console.WriteLine ("Replace FROM: " + mPath + "\\" + fileName + "  TO: " + settings.PSO2Dir + "\\" + fileName);
 
-                    if (!Mod.ModSettingsFiles.Contains (fileName)) {
+                    if (!Mod.modSettingsFiles.Contains(fileName)) {
                         var BackupTask = new Helpers.FileCopy (destin, backup);
                         var ApplyModTask = new Helpers.FileCopy (from, destin);
 
@@ -368,14 +376,14 @@ namespace PSO2ModManager {
                         m.ContentsMD5.Add (fileName, Helpers.CheckMD5 (destin));
 
                         Console.WriteLine ("Backup Task");
-                        await Task.Run (() => BackupTask.StartCopy ());
+                        await Task.Run (() => BackupTask.StartCopy());
                         Console.WriteLine ("Apply Mod Task");
-                        await Task.Run (() => ApplyModTask.StartCopy ());
+                        await Task.Run (() => ApplyModTask.StartCopy());
                     }
                 }
                 InstalledMods.Add (m);
                 AvailableMods.Remove (m);
-                UpdateSettings ();
+                UpdateSettings();
             } else {
                 MessageBox.Show ("Another installed mod is using the same files this mod will try to overwrite. Installation cancelled",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -392,7 +400,7 @@ namespace PSO2ModManager {
             try {
                 var files = Directory.GetFiles (mPath).Select (x => Path.GetFileName (x));
                 var collision = InstalledMods.SelectMany (x => Directory.GetFiles (Mod.InstallPath + x.Slug).Select (y => Path.GetFileName (y))).Intersect (files);
-                if (collision.Count () != 0) {
+                if (collision.Count() != 0) {
                     return true;
                 }
             } catch {
@@ -422,7 +430,7 @@ namespace PSO2ModManager {
                     // TODO: if backup file does not exists or not vanilla file, download patch from official site
 
                     var UninstallTask = new Helpers.FileCopy (backup, destin);
-                    if (!await Task.Run (() => UninstallTask.StartCopy ())) {
+                    if (!await Task.Run (() => UninstallTask.StartCopy())) {
                         // If error, download patch from official site
                         await Task.Run (() => Helpers.DownloadPatch (fileName, destin));
                     }
@@ -436,13 +444,13 @@ namespace PSO2ModManager {
             m.ToolInfo.Replace (Mod.ModBrokenMessage, "");
             InstalledMods.Remove (m);
             AvailableMods.Add (m);
-            UpdateSettings ();
+            UpdateSettings();
         }
 
         /// <summary>
         /// Removes the selected mod.
         /// </summary>
-        public void Delete () {
+        public void Delete() {
             Delete (SelectedMod);
             SelectedMod = null;
         }
@@ -453,11 +461,11 @@ namespace PSO2ModManager {
         public void Delete (string slug) {
             var available = AvailableMods.Where (x => x.Slug == slug);
             var installed = InstalledMods.Where (x => x.Slug == slug);
-            if (available.Count () != 0) {
-                Delete (available.First ());
+            if (available.Count() != 0) {
+                Delete (available.First());
             }
-            if (installed.Count () != 0) {
-                Delete (installed.First ());
+            if (installed.Count() != 0) {
+                Delete (installed.First());
             }
         }
 
@@ -467,11 +475,11 @@ namespace PSO2ModManager {
         public async void Delete (Mod m) {
             string modPath = Mod.InstallPath + m.Slug;
             string imagePath = Mod.ImagePath + m.Thumbnail;
-            if (InstalledMods.Where (x => x.Slug == m.Slug).Count () != 0) {
+            if (InstalledMods.Where (x => x.Slug == m.Slug).Count() != 0) {
                 await Uninstall (SelectedMod);
             }
             AvailableMods.Remove (m);
-            UpdateSettings ();
+            UpdateSettings();
             if (Directory.Exists (modPath)) {
                 Directory.Delete (modPath, true);
             }
