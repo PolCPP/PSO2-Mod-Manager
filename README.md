@@ -1,6 +1,6 @@
 ﻿# Phantasy Star Online 2 Mod manager
 
-[![Build status](https://ci.appveyor.com/api/projects/status/n8o73hgyoy7rn9ep?svg=true)](https://ci.appveyor.com/project/logue/pso2-mod-manager)
+[![Build status](https://ci.appveyor.com/api/projects/status/r6xfi47wdcxjmj23?svg=true)](https://ci.appveyor.com/project/PolCPP/pso2-mod-manager)
 
 ## About
 
