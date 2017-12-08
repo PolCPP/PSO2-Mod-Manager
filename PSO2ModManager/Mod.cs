@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace PSO2ModManager
-{
-    public class Mod : INotifyPropertyChanged
-    {
+namespace PSO2ModManager {
+    public class Mod : INotifyPropertyChanged {
         public string Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
@@ -20,13 +18,13 @@ namespace PSO2ModManager
         public string ToolInfo { get; set; } = "";
 
         [IgnoreDataMember]
-        public static readonly string ModBrokenMessage = "(Broken)";
+        public static readonly string ModBrokenMessage = Helpers._ ("Mod.Broken");
 
         [IgnoreDataMember]
-        public static readonly string ModUpdateMessage = "(Update Available)";
+        public static readonly string ModUpdateMessage = Helpers._ ("Mod.Update");
 
         [IgnoreDataMember]
-        public static readonly string ModLocalMessage = "(Local)";
+        public static readonly string ModLocalMessage = Helpers._ ("Mod.Local");
 
         [IgnoreDataMember]
         public static readonly string[] ModSettingsFiles = new string[] { "settings.csv", "targets.csv", "options.csv" };
@@ -48,11 +46,11 @@ namespace PSO2ModManager
             set {
                 if (value == true && this.ToolInfo == null) {
                     this.ToolInfo = ModUpdateMessage;
-                } else if (value == true && !this.ToolInfo.Contains(ModUpdateMessage)) {
+                } else if (value == true && !this.ToolInfo.Contains (ModUpdateMessage)) {
                     this.ToolInfo += ModUpdateMessage;
                 }
                 updateAvailable = value;
-                NotifyPropertyChanged("UpdateAvailable");
+                NotifyPropertyChanged ("UpdateAvailable");
             }
         }
 
@@ -64,7 +62,7 @@ namespace PSO2ModManager
             set {
                 if (value == true && this.ToolInfo == null) {
                     this.ToolInfo = ModLocalMessage;
-                } else if (value == true && !this.ToolInfo.Contains(ModLocalMessage)) {
+                } else if (value == true && !this.ToolInfo.Contains (ModLocalMessage)) {
                     this.ToolInfo += ModLocalMessage;
                 }
                 isLocal = value;
@@ -79,7 +77,7 @@ namespace PSO2ModManager
 
             set {
                 busy = value;
-                NotifyPropertyChanged("Busy");
+                NotifyPropertyChanged ("Busy");
             }
         }
 
@@ -87,7 +85,7 @@ namespace PSO2ModManager
         private bool isLocal = false;
         private bool updateAvailable = false;
 
-        public Mod(string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail, bool local = false) {
+        public Mod (string id, string name, DateTime date, string description, string author, string url, string file, string slug, string thumbnail, bool local = false) {
             this.Id = id;
             this.Name = name;
             this.Date = date;
@@ -103,8 +101,8 @@ namespace PSO2ModManager
         /// <summary>
         /// Checks if a mod is valid. Note: This is kinda placeholderish.
         /// Note that it doesn't check if the mod data is correct or well installed.
-        /// </summary
-        public bool isValid() {
+        /// </summary>
+        public bool isValid () {
             if (Id == null || Name == null || Date == null || Description == null || Author == null || Url == null || File == null || Slug == null || Thumbnail == null) {
                 return false;
             }
@@ -113,9 +111,9 @@ namespace PSO2ModManager
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(String info) {
+        private void NotifyPropertyChanged (String info) {
             if (PropertyChanged != null) {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
+                PropertyChanged (this, new PropertyChangedEventArgs (info));
             }
         }
     }
