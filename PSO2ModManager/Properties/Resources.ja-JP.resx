@@ -13,7 +13,19 @@
     Example:
     
     ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader><resheader name="version">2.0</resheader><resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader><resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader><data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data><data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data><data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64"><value>[base64 mime encoded serialized .NET Framework object]</value></data><data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64"><value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value><comment>This is a comment</comment></data>
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
                 
     There are any number of "resheader" rows that contain simple 
     name/value pairs.
@@ -194,5 +206,11 @@
   </data>
   <data name="Mod.Update" xml:space="preserve">
     <value>(更新あり)</value>
+  </data>
+  <data name="Dialog.Welcome" xml:space="preserve">
+    <value>Warning: Please remember that this software could damage your PSO2 installation. Also please note that Sega does not endorse nor condone modding in any way or form, thus this can get you banned. We're not responsible/liable if your account is banned. Play at your own risk, thanks.</value>
+  </data>
+  <data name="Dialog.WelcomeTitle" xml:space="preserve">
+    <value>Important</value>
   </data>
 </root>

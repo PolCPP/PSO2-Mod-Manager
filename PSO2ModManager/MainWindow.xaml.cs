@@ -35,6 +35,7 @@ namespace PSO2ModManager
         public ModPresenter SelectedPresenter { get; set; } = new ModPresenter();
         private DispatcherTimer updatesTimer;
         private InlineDialog d;
+        private string CurrentPageTitle;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.MessageBox.Show(System.String,System.String)")]
         public MainWindow() {
@@ -47,12 +48,8 @@ namespace PSO2ModManager
             if (ModManager.CheckForSettings()) {
                 Mods = new ModManager();
             } else {
-                MessageBox.Show("This is a very early version of the mod tool," +
-                    "so it looks like crap, and while it shouldn't, it could" +
-                    "make your pso2 explode in a thousand darkers.\n Also remember" +
-                    "that Sega doesn't approve of mods, so don't come crying to" +
-                    "Rupi if they ban you.  You've been warmed \n -Rupi ",
-                    "Important!");
+                MessageBox.Show(Helpers._("Dialog.Welcome"),
+                    Helpers._("Dialog.WelcomeTitle"));
                 Mods = new ModManager (GetPSO2Dir());
             }
 
@@ -282,13 +279,15 @@ namespace PSO2ModManager
         }
 
         private async void Browser_TitleChanged (object sender, DependencyPropertyChangedEventArgs e) {
+            if (CurrentPageTitle == e.NewValue.ToString()) return;
+            CurrentPageTitle = e.NewValue.ToString();
             DownloadAction duh = new DownloadAction
             {
                 Url = "http://google.com"
             };
             try {
                 JsonSerializer.SerializeToString<DownloadAction> (duh);
-                DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction> (e.NewValue.ToString());
+                DownloadAction da = JsonSerializer.DeserializeFromString<DownloadAction> (CurrentPageTitle);
                 if (da.Url != null) {
                     await DownloadMod (da.Url);
                 }

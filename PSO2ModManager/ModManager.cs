@@ -65,7 +65,20 @@ namespace PSO2ModManager {
                     AvailableMods = new List<Mod>(),
                     InstalledMods = new List<Mod>()
                 };
-            } else {
+                if (!Directory.Exists(Mod.ImagePath))
+                {
+                    Directory.CreateDirectory(Mod.ImagePath);
+                }
+                if (!Directory.Exists(Mod.BackupPath))
+                {
+                    Directory.CreateDirectory(Mod.BackupPath);
+                }
+                if (!Directory.Exists(Mod.InstallPath))
+                {
+                    Directory.CreateDirectory(Mod.InstallPath);
+                }
+            }
+            else {
                 settings = JsonSerializer.DeserializeFromString<Settings> (File.ReadAllText (Settings.SettingsPath));
             }
             if (!Directory.Exists (settings.PSO2Dir)) {

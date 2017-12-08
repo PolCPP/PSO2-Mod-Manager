@@ -207,4 +207,10 @@
   <data name="Mod.Update" xml:space="preserve">
     <value>(Update Available)</value>
   </data>
+  <data name="Dialog.Welcome" xml:space="preserve">
+    <value>Warning: Please remember that this software could damage your PSO2 installation. Also please note that Sega does not endorse nor condone modding in any way or form, thus this can get you banned. We're not responsible/liable if your account is banned. Play at your own risk, thanks.</value>
+  </data>
+  <data name="Dialog.WelcomeTitle" xml:space="preserve">
+    <value>Important</value>
+  </data>
 </root>
