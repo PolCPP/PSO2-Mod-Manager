@@ -208,7 +208,10 @@
     <value>(更新あり)</value>
   </data>
   <data name="Dialog.Welcome" xml:space="preserve">
-    <value>Warning: Please remember that this software could damage your PSO2 installation. Also please note that Sega does not endorse nor condone modding in any way or form, thus this can get you banned. We're not responsible/liable if your account is banned. Play at your own risk, thanks.</value>
+    <value>このソフトウェアは、PSO2のインストール環境にダメージを与える可能性があることについて留意して下さい。
+また、いかなる場合においてもSEGAは、Moddingに関して支持したり黙認するものではありません。潜在的にバンされる可能性があります。
+
+本ツールを使用したことによって、アカウントをバンされるなどの被害があっても一切の責任を負いかねます。利用は、自己責任でお願いします。</value>
   </data>
   <data name="Dialog.WelcomeTitle" xml:space="preserve">
     <value>Important</value>
